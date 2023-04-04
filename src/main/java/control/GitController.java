@@ -1,2 +1,4 @@
-package control;public class GitController {
+package control;
+
+public class GitController {
 }
