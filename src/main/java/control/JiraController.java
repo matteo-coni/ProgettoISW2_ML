@@ -136,7 +136,7 @@ public class JiraController {
                 creationDate = creationDate.substring(0,10);
                 openingDate = Date.valueOf(creationDate);
 
-
+                //creo due oggetti fv e ov da inserire poi nella creazione dell'oggetto issue
                 fv = getFixedOpeningVersions(releaseList, resolutionDate);
                 ov = getFixedOpeningVersions(releaseList, openingDate);
 
@@ -145,7 +145,6 @@ public class JiraController {
                 avJSONArray = issuesArray.getJSONObject(i%1000).getJSONObject(FIELD).getJSONArray("versions");
                 avList = getAffectedVersions(avJSONArray);
 
-                //listIssues.add(new Issue(key, null, ov, fv, avList));
                 Issue addIssue = createIssue(key, ov, fv, avList);
                 if (!verifyIssue(addIssue)) listIssues.add(addIssue);
 
@@ -156,16 +155,21 @@ public class JiraController {
         return listIssues;
     }
 
+    /*in questo metodo verifico delle condizioni sui vari bug prima di aggiungerli alla lista  */
     public boolean verifyIssue(Issue issue){
-        boolean flag = true;
+        //fv or ov are null
         if (issue.getFv() == null || issue.getOv()==null){
-            return flag;
+            return true;
         }
+        // ov > fv
         if (issue.getOv().getDate().compareTo(issue.getFv().getDate())>0){
-            return flag = false;
+            return true;
         }
-
-
+        //cosi con bookkeeper ci sono 372 bug validi, per ora
+        // iv = ov = fv
+        if (issue.getIv()!=null && issue.getIv().getDate().compareTo(issue.getOv().getDate())==0 && issue.getOv().getDate().compareTo(issue.getFv().getDate())==0){
+            return true;
+        }
 
         return false;
     }
@@ -213,5 +217,11 @@ public class JiraController {
         }
 
         return avList;
+    }
+
+    public static List<Release> halfReleases( List<Release> allReleaseList){
+        List<Release> listHalfRelease = new ArrayList<>();
+        //to do
+        return  listHalfRelease;
     }
 }

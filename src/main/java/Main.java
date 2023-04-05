@@ -11,18 +11,24 @@ public class Main {
         System.out.println("Hello world!");
 
         JiraController jiraControl = new JiraController();
-        List<Release> releaseList = jiraControl.getReleases(projName);
-        List<Issue> bugsList = jiraControl.getIssues(projName);
+        List<Release> releaseList = jiraControl.getReleases(projName); //ottengo tutte le release
+        List<Issue> bugsList = jiraControl.getIssues(projName); //ottengo tutti i bug (controllati)
 
         for (Release r : releaseList){
             System.out.println(r.getId() + " " + r.getName() + " " + r.getDate() );
         }
 
-       for (Issue issues : bugsList){
+       /*for (Issue issues : bugsList){
             System.out.println(issues.getKey() + " " + issues.getOv().getName() + " " +issues.getFv().getName());
+       }*/
+        System.out.println(bugsList.size());
 
-       }
-       System.out.println(bugsList.size());
+        //now retrive iv in the bug where is null
+        List<Release> halfReleaseList = JiraController.halfReleases(releaseList);
+
+        //to do: proportion
+
+        //next: retrive git java file and metrics
 
     }
 }
