@@ -110,7 +110,7 @@ public class JiraController {
             /* project = <projName> AND issuetype = Bug AND (status = Closed OR status = Resolved) AND resolution = Fixed */
             String url = "https://issues.apache.org/jira/rest/api/2/search?jql=project=%22"
                     + projName + "%22AND%22issueType%22=%22Bug%22AND(%22status%22=%22closed%22OR"
-                    + "%22status%22=%22resolved%22)AND%22resolution%22=%22fixed%22&fields=key,resolutiondate,versions,created&startAt="
+                    + "%22status%22=%22resolved%22)AND%22resolution%22=%22fixed%22&fields=key,resolutiondate,versions,created,fixVersions&startAt="
                     + i.toString() + "&maxResults=" + j.toString();
 
             JSONObject objectJson = readJsonFromUrl(url);
@@ -127,18 +127,27 @@ public class JiraController {
                 String key = currentObjectJson.get("key").toString();
                 String versionJson = currentObjectJson.getJSONObject(FIELD).get("versions").toString();
                 String fixVersionsJson = currentObjectJson.getJSONObject(FIELD).get("fixVersions").toString();
-                String stringResolutionDate = currentObjectJson.getJSONObject(FIELD).get("resolutiondate").toString();
+                String stringResolutionDate = currentObjectJson.getJSONObject(FIELD).getString("resolutiondate");//.toString();
                 String creationDate = currentObjectJson.getJSONObject(FIELD).get("created").toString();
 
-                //resolutionDate = resolutionDate.substring(0,10);
+                stringResolutionDate = stringResolutionDate.substring(0,10);
                 resolutionDate = Date.valueOf(stringResolutionDate);
+
+                creationDate = creationDate.substring(0,10);
                 openingDate = Date.valueOf(creationDate);
+
 
                 fv = getFixedOpeningVersions(releaseList, resolutionDate);
                 ov = getFixedOpeningVersions(releaseList, openingDate);
 
+
+                //array dell'oggetto i-esimo, prendendo il campo fields e successivamente le affected versions
                 avJSONArray = issuesArray.getJSONObject(i%1000).getJSONObject(FIELD).getJSONArray("versions");
                 avList = getAffectedVersions(avJSONArray);
+
+                //listIssues.add(new Issue(key, null, ov, fv, avList));
+                Issue addIssue = createIssue(key, ov, fv, avList);
+                if (!verifyIssue(addIssue)) listIssues.add(addIssue);
 
             }
 
@@ -147,6 +156,32 @@ public class JiraController {
         return listIssues;
     }
 
+    public boolean verifyIssue(Issue issue){
+        boolean flag = true;
+        if (issue.getFv() == null || issue.getOv()==null){
+            return flag;
+        }
+        if (issue.getOv().getDate().compareTo(issue.getFv().getDate())>0){
+            return flag = false;
+        }
+
+
+
+        return false;
+    }
+    public Issue createIssue(String key, Release ov, Release fv, List<Release> avList){
+        Issue newIssue = null;
+        Release iv = null;
+        if(!avList.isEmpty()){
+            avList.sort(Comparator.comparing(o -> o.getDate().toString()));
+            iv = avList.get(0);
+            newIssue = new Issue(key, iv, ov, fv, avList);
+        } else {
+            newIssue = new Issue(key, null, ov, fv, avList);
+        }
+
+        return newIssue;
+    }
     public Release getFixedOpeningVersions(List<Release> releaseList, Date date) {
 
         Release rel = null;
@@ -163,8 +198,19 @@ public class JiraController {
     public List<Release> getAffectedVersions(JSONArray affVersArray){
 
         List<Release> avList = new ArrayList<>();
+        Release releaseAv;
+        boolean released; //true o false flag
+        int jsonArrLenght = affVersArray.length();
+        int k;
         //to do: fai il parsing del jsonArray per creare le versioni ed aggiungerle alla lista avList
 
+        for (k = 0; k < jsonArrLenght; k++){
+            released = affVersArray.getJSONObject(k).getBoolean("released");
+            if (released){
+                releaseAv = new Release(affVersArray.getJSONObject(k).getString("name"), Date.valueOf(affVersArray.getJSONObject(k).getString("releaseDate")));
+                avList.add(releaseAv);
+            }
+        }
 
         return avList;
     }
