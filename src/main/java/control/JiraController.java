@@ -119,10 +119,6 @@ public class JiraController {
 
             for (; i < total && i < j; i++) {
 
-                /*Issue issue = createTicketInstance(i, issues, releasesList);
-                if(ticket != null) {
-                    ticketsList.add(ticket);
-                }*/
                 JSONObject currentObjectJson = issuesArray.getJSONObject(i%1000);
                 String key = currentObjectJson.get("key").toString();
                 String versionJson = currentObjectJson.getJSONObject(FIELD).get("versions").toString();
@@ -143,7 +139,10 @@ public class JiraController {
 
                 //array dell'oggetto i-esimo, prendendo il campo fields e successivamente le affected versions
                 avJSONArray = issuesArray.getJSONObject(i%1000).getJSONObject(FIELD).getJSONArray("versions");
-                avList = getAffectedVersions(avJSONArray);
+                //System.out.println(avJSONArray);
+                List<Release> affectedVersions = getAffectedVersions(avJSONArray, releaseList);
+                avList = affectedVersions;
+                //System.out.println(avList);
 
                 Issue addIssue = createIssue(key, ov, fv, avList);
                 if (!verifyIssue(addIssue)) listIssues.add(addIssue);
@@ -170,17 +169,26 @@ public class JiraController {
         if (issue.getIv()!=null && issue.getIv().getDate().compareTo(issue.getOv().getDate())==0 && issue.getOv().getDate().compareTo(issue.getFv().getDate())==0){
             return true;
         }
+        //con questo diventano 368
+        // iv!=null e iv > ov
+        if (issue.getIv()!=null && (issue.getOv().getDate().compareTo(issue.getIv().getDate())<0)){
+            //System.out.println(" ov: " + issue.getOv().getDate() + " iv: " + issue.getIv().getDate());
+            return true;
+        }
 
         return false;
     }
     public Issue createIssue(String key, Release ov, Release fv, List<Release> avList){
         Issue newIssue = null;
         Release iv = null;
+        //se la lista delle av non è vuota, allora significa che è presente iv e posso inserirla
         if(!avList.isEmpty()){
+            //to do: aggiungere controllo per vedere se la più vecchia av (iv) è dopo l'ov. in quel caso crea comunque ma con iv null e av=[]
             avList.sort(Comparator.comparing(o -> o.getDate().toString()));
             iv = avList.get(0);
+
             newIssue = new Issue(key, iv, ov, fv, avList);
-        } else {
+        } else { //se non è presente l'av, non lo è nemmeno l'iv, quindi la imposto per ora uguale a null
             newIssue = new Issue(key, null, ov, fv, avList);
         }
 
@@ -199,7 +207,7 @@ public class JiraController {
         return rel;
     }
 
-    public List<Release> getAffectedVersions(JSONArray affVersArray){
+    public List<Release> getAffectedVersions(JSONArray affVersArray, List<Release> releaseList) {
 
         List<Release> avList = new ArrayList<>();
         Release releaseAv;
@@ -210,15 +218,33 @@ public class JiraController {
 
         for (k = 0; k < jsonArrLenght; k++){
             released = affVersArray.getJSONObject(k).getBoolean("released");
-            if (released){
-                releaseAv = new Release(affVersArray.getJSONObject(k).getString("name"), Date.valueOf(affVersArray.getJSONObject(k).getString("releaseDate")));
-                avList.add(releaseAv);
+            if (released){ //&& (affVersArray.getJSONObject(k).has("releasedDate"))){
+                //questo perché in zookkeeper (e altri) alcuni ticket hanno av senza releasedate nel json
+                Date releaseDate = getReleaseDateByName(affVersArray.getJSONObject(k).getString("name"), releaseList);
+
+                if (releaseDate!=null) { //qui skip le av senza le releasedate
+                    releaseAv = new Release(affVersArray.getJSONObject(k).getString("name"), releaseDate);//Date.valueOf(affVersArray.getJSONObject(k).getString("releaseDate")));
+
+                    avList.add(releaseAv);
+                }
             }
         }
 
         return avList;
     }
 
+    public static Date getReleaseDateByName(String nameRel, List<Release> releaseList){
+        Date dateRel = null;
+        for(Release rel : releaseList){
+            if (rel.getName().equals(nameRel)){
+                dateRel = rel.getDate();
+            }
+        }
+
+        return dateRel;
+
+
+    }
     public static List<Release> halfReleases( List<Release> allReleaseList){
         List<Release> listHalfRelease = new ArrayList<>();
         //to do
