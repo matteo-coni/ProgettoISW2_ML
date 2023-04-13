@@ -3,14 +3,16 @@ package control;
 import model.Issue;
 import model.Release;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 public class ProportionController {
 
-    public static List<Issue> computeProportion(List<Release> releaseList, List<Issue> bugsList){
+    public static List<Issue> computeProportion(List<Release> releaseList, List<Issue> bugsList) throws IOException {
 
         List<Issue> bugsListProportion = new ArrayList<>();
+        List<Issue> bugsListToDo = new ArrayList<>();
+        List<Issue> bugsListWithIv = new ArrayList<>();
         /*qui ora devo prendere la lista bugsList e verificare quali bug non hanno l'av e l'iv
           su quei bug devo calcolare l'iv (e poi l'avlist) in base al valore p calcolato o con cold start o con incremental
           p = (fv - iv)/(fv - ov) e iv = fv-(fv-ov)*p
@@ -24,8 +26,119 @@ public class ProportionController {
           e faccio la media.
 
          */
+        //increment
+        float p = 0;
+        float p_tot = 0;
+        int ivId;
+        int ovId;
+        int fvId;
+        int count = 0;
+        for (Issue bug : bugsList) {
+            if (bug.getIv() == null) {
+                bugsListToDo.add(bug);
+            } else {
+                bugsListWithIv.add(bug);
+            }
+        }
+
+       for (Issue bugsToDo : bugsListToDo){
+           count = 0;
+           p_tot = 0;
+           for (Issue bug : bugsListWithIv){
+               if (bug.getNum() < bugsToDo.getNum()){
+                   ivId = bug.getIv().getId();
+                   ovId = bug.getOv().getId();
+                   fvId = bug.getFv().getId();
+                   if (fvId != ovId) { //per evitare lo zero
+                       p = pCalc(ivId, ovId, fvId);
+                       count++;
+                       p_tot = p_tot + p;
+                   }
+               }
+           }
+           p_tot = (float)(p_tot/count);
+           if(count < 3) {
+               calculatorColdStart(bugsToDo, releaseList); //se count==0 significa che non c'è nessun bug con iv valido prima di esso e va applicato cold start
+           } else {
+
+               calculatorIV(bugsToDo, p_tot, releaseList);
+           }
+       }
 
         return bugsListProportion; //qui devo ritornare la lista dei bug con tutte le iv e av presenti, quindi quella definitiva
 
+    }
+
+    public static void calculatorIV(Issue bugsToDo, float p, List<Release> releaseList){
+        System.out.println("entrato in calcultaor iv bug: " + bugsToDo.getKey() + " " + p) ;
+        Release relIv = null;
+        float ivIdB;
+        int ovIdB = bugsToDo.getOv().getId();
+        int fvIdB = bugsToDo.getFv().getId();
+        if (fvIdB==ovIdB) {
+            ivIdB = (fvIdB - (float) (1) * p); // qui metto 1 per ovviare al problema di fv==ov, ma resta il problema di quando fv e ov sono uguali ad 1 e viene
+        } else {
+            ivIdB = fvIdB - (fvIdB - ovIdB) * p; //iv = fv-(fv-ov)*p se ov e fv sono uguali fv-ov si annulla e viene semopre iv = fv
+        }
+
+        for(Release rel : releaseList){
+            if(rel.getId() == Math.round(ivIdB)){ //Math.round per approssimare
+                relIv = rel;
+            }
+        }
+        if(relIv==null) relIv = releaseList.get(0); //se l'indice dell'iv viene 0, quindi una release che non esiste, la forza ad 1
+        //if(relIv!=null) System.out.println(relIv.getId());
+        bugsToDo.setIv(relIv);
+
+    }
+
+    public static void calculatorColdStart(Issue bugsToDo, List<Release> releaseList) throws IOException {
+
+        System.out.println("entrato in cold start, bug: " + bugsToDo.getKey());
+        List<Float> p_tot = new ArrayList<>();
+        float p;
+        float p_coldStart;
+        int count;
+        float p_proj;
+        List<String> listProjName = new ArrayList<>();
+        List<Release> listReleaseColdStart = new ArrayList<>();
+        List<Issue> listIssueColdStart = new ArrayList<>();
+        List<Issue> listIssueCSWithIV = new ArrayList<>();
+        //todo: aggiungere enum oppure aggiungi altri progetti alla lisfa
+        listProjName.add("ZOOKEEPER");
+        //for su tutti i progetti scelti, per ora con lista
+        for(String projName : listProjName) {
+            //ora prendo le release
+            JiraController jiraControl = new JiraController();
+            listReleaseColdStart = jiraControl.getReleases(projName);
+            listIssueColdStart = jiraControl.getIssues(projName);
+            count = 0;
+            p_proj = 0;
+            for(Issue bug : listIssueColdStart){
+                if(bug.getIv()!=null){
+                    p = pCalc(bug.getIv().getId(), bug.getOv().getId(), bug.getFv().getId());
+                    count++;
+                    p_proj += p;
+                }
+            }
+            p_proj = p_proj / count;
+            p_tot.add(p_proj);
+        }
+
+        p_tot.sort(Comparator.comparing(o -> o));
+
+        if (p_tot.size() % 2 == 0) {
+            p_coldStart = (p_tot.get(p_tot.size() / 2) + p_tot.get(p_tot.size() / 2 - 1)) / 2;
+        } else {
+            p_coldStart = p_tot.get(p_tot.size() / 2);
+        }
+
+        calculatorIV(bugsToDo, p_coldStart, releaseList);
+
+    }
+    public static float pCalc(int ivId, int ovId, int fvId){
+        float p = (float)(fvId - ivId) / (fvId - ovId);
+
+        return p;
     }
 }

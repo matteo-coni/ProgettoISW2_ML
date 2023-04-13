@@ -10,12 +10,15 @@ public class Issue {
     private Release fv;
     private List<Release> av;
 
-    public Issue(String key, Release iv, Release ov, Release fv, List<Release> av) {
+    private int num;
+
+    public Issue(String key, Release iv, Release ov, Release fv, List<Release> av, int num) {
         this.key = key;
         this.iv = iv;
         this.ov = ov;
         this.fv = fv;
         this.av = av;
+        this.num = num;
     }
 
     public String getKey() {
@@ -56,5 +59,13 @@ public class Issue {
 
     public void setAv(List<Release> av) {
         this.av = av;
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
     }
 }

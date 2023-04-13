@@ -123,7 +123,7 @@ public class JiraController {
                 String key = currentObjectJson.get("key").toString();
                 String versionJson = currentObjectJson.getJSONObject(FIELD).get("versions").toString();
                 String fixVersionsJson = currentObjectJson.getJSONObject(FIELD).get("fixVersions").toString();
-                String stringResolutionDate = currentObjectJson.getJSONObject(FIELD).getString("resolutiondate");//.toString();
+                String stringResolutionDate = currentObjectJson.getJSONObject(FIELD).getString("resolutiondate");
                 String creationDate = currentObjectJson.getJSONObject(FIELD).get("created").toString();
 
                 stringResolutionDate = stringResolutionDate.substring(0,10);
@@ -139,18 +139,19 @@ public class JiraController {
 
                 //array dell'oggetto i-esimo, prendendo il campo fields e successivamente le affected versions
                 avJSONArray = issuesArray.getJSONObject(i%1000).getJSONObject(FIELD).getJSONArray("versions");
-                //System.out.println(avJSONArray);
+                //System.out.println(i+1);
                 List<Release> affectedVersions = getAffectedVersions(avJSONArray, releaseList);
                 avList = affectedVersions;
                 //System.out.println(avList);
 
-                Issue addIssue = createIssue(key, ov, fv, avList);
+                Issue addIssue = createIssue(key, ov, fv, avList, total-i);
                 if (!verifyIssue(addIssue)) listIssues.add(addIssue);
 
             }
 
         } while (i < total);
-
+        //ordino lista in ordine crescente, dal più vecchio (1) al più recente [1,2,3..]
+        listIssues.sort(Comparator.comparing(o -> o.getNum()));
         return listIssues;
     }
 
@@ -176,9 +177,11 @@ public class JiraController {
             return true;
         }
 
+
+
         return false;
     }
-    public Issue createIssue(String key, Release ov, Release fv, List<Release> avList){
+    public Issue createIssue(String key, Release ov, Release fv, List<Release> avList, int i){
         Issue newIssue = null;
         Release iv = null;
         //se la lista delle av non è vuota, allora significa che è presente iv e posso inserirla
@@ -187,9 +190,9 @@ public class JiraController {
             avList.sort(Comparator.comparing(o -> o.getDate().toString()));
             iv = avList.get(0);
 
-            newIssue = new Issue(key, iv, ov, fv, avList);
+            newIssue = new Issue(key, iv, ov, fv, avList, i);
         } else { //se non è presente l'av, non lo è nemmeno l'iv, quindi la imposto per ora uguale a null
-            newIssue = new Issue(key, null, ov, fv, avList);
+            newIssue = new Issue(key, null, ov, fv, avList, i);
         }
 
         return newIssue;
@@ -214,16 +217,16 @@ public class JiraController {
         boolean released; //true o false flag
         int jsonArrLenght = affVersArray.length();
         int k;
-        //to do: fai il parsing del jsonArray per creare le versioni ed aggiungerle alla lista avList
 
         for (k = 0; k < jsonArrLenght; k++){
             released = affVersArray.getJSONObject(k).getBoolean("released");
-            if (released){ //&& (affVersArray.getJSONObject(k).has("releasedDate"))){
+            if (released){
                 //questo perché in zookkeeper (e altri) alcuni ticket hanno av senza releasedate nel json
                 Date releaseDate = getReleaseDateByName(affVersArray.getJSONObject(k).getString("name"), releaseList);
+                int releaseId = getReleaseIdByName(affVersArray.getJSONObject(k).getString("name"), releaseList);
 
                 if (releaseDate!=null) { //qui skip le av senza le releasedate
-                    releaseAv = new Release(affVersArray.getJSONObject(k).getString("name"), releaseDate);//Date.valueOf(affVersArray.getJSONObject(k).getString("releaseDate")));
+                    releaseAv = new Release(releaseId, affVersArray.getJSONObject(k).getString("name"), releaseDate);//Date.valueOf(affVersArray.getJSONObject(k).getString("releaseDate")));
 
                     avList.add(releaseAv);
                 }
@@ -240,10 +243,17 @@ public class JiraController {
                 dateRel = rel.getDate();
             }
         }
-
         return dateRel;
+    }
 
-
+    public static int getReleaseIdByName(String nameRel, List<Release> releaseList){
+        int id = 0;
+        for(Release rel : releaseList){
+            if (rel.getName().equals(nameRel)){
+                id = rel.getId();
+            }
+        }
+        return id;
     }
     public static List<Release> halfReleases( List<Release> allReleaseList){
         List<Release> listHalfRelease = new ArrayList<>();
