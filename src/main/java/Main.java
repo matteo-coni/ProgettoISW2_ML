@@ -14,28 +14,30 @@ public class Main {
         JiraController jiraControl = new JiraController();
         List<Release> releaseList = jiraControl.getReleases(projName); //ottengo tutte le release
         List<Issue> bugsList = jiraControl.getIssues(projName); //ottengo tutti i bug (controllati)
+        System.out.println(bugsList.size());
 
         for (Release r : releaseList){
             System.out.println(r.getId() + " " + r.getName() + " " + r.getDate() );
         }
 
-        /*for (Issue issues : bugsList){
-            System.out.println("num: " + issues.getNum() + " key: " + issues.getKey() + " ov: " + issues.getOv().getName() + " fv: " +issues.getFv().getName() + " affect: " + issues.getAv().size());
-            if(issues.getIv()!=null) System.out.println(issues.getIv().getId());
-        }
-        System.out.println("Numero bug " + projName + " = " + bugsList.size());*/
-
-        //now retrive iv in the bug where is null
         List<Release> halfReleaseList = JiraController.halfReleases(releaseList);
+        System.out.println("inizio metà release");
+        for (Release r : halfReleaseList){
+            System.out.println(r.getId() + " " + r.getName() + " " + r.getDate() );
+        }
 
-        //to do: proportion
+        //proportion
         List<Issue> bugsListProportion = ProportionController.computeProportion(releaseList, bugsList);
+        List<Issue> bugsListProportionHalf = JiraController.halfIssues(bugsList); //tolgo la seconda metà dei bug per lo snoring
+        List<Issue> bugsListFinal = JiraController.cleanOvFv(bugsListProportionHalf);
 
-        //next: retrive git java file and metrics
-        for (Issue issues : bugsList){
+
+        for (Issue issues : bugsListFinal){
             System.out.println("num: " + issues.getNum() + " key: " + issues.getKey() + " ov: " + issues.getOv().getName() + " fv: " +issues.getFv().getName() + " indice fv: " + issues.getFv().getId());
             if (issues.getIv()!=null) System.out.println("indice iv: " + issues.getIv().getId());
-
         }
+        System.out.println(bugsListFinal.size());
+
+        //next: retrive git java file and metrics
     }
 }

@@ -29,6 +29,7 @@ public class ProportionController {
         //increment
         float p = 0;
         float p_tot = 0;
+        float pColdStart = 0;
         int ivId;
         int ovId;
         int fvId;
@@ -40,7 +41,7 @@ public class ProportionController {
                 bugsListWithIv.add(bug);
             }
         }
-
+        pColdStart = calculatorColdStart();
        for (Issue bugsToDo : bugsListToDo){
            count = 0;
            p_tot = 0;
@@ -57,10 +58,10 @@ public class ProportionController {
                }
            }
            p_tot = (float)(p_tot/count);
-           if(count < 3) {
-               calculatorColdStart(bugsToDo, releaseList); //se count==0 significa che non c'è nessun bug con iv valido prima di esso e va applicato cold start
+           if(count < 5) {
+               //calculatorColdStart(bugsToDo, releaseList); //se count==0 significa che non c'è nessun bug con iv valido prima di esso e va applicato cold start
+               calculatorIV(bugsToDo,pColdStart, releaseList);
            } else {
-
                calculatorIV(bugsToDo, p_tot, releaseList);
            }
        }
@@ -70,13 +71,13 @@ public class ProportionController {
     }
 
     public static void calculatorIV(Issue bugsToDo, float p, List<Release> releaseList){
-        System.out.println("entrato in calcultaor iv bug: " + bugsToDo.getKey() + " " + p) ;
+        //System.out.println("entrato in calcultaor iv bug: " + bugsToDo.getKey() + " " + p) ;
         Release relIv = null;
         float ivIdB;
         int ovIdB = bugsToDo.getOv().getId();
         int fvIdB = bugsToDo.getFv().getId();
         if (fvIdB==ovIdB) {
-            ivIdB = (fvIdB - (float) (1) * p); // qui metto 1 per ovviare al problema di fv==ov, ma resta il problema di quando fv e ov sono uguali ad 1 e viene
+            ivIdB = (fvIdB - (float) (1) * p); // qui metto 1 per ovviare al problema di fv==ov, ma resta il problema di quando fv e ov sono uguali ad 1 e viene 1
         } else {
             ivIdB = fvIdB - (fvIdB - ovIdB) * p; //iv = fv-(fv-ov)*p se ov e fv sono uguali fv-ov si annulla e viene semopre iv = fv
         }
@@ -92,16 +93,16 @@ public class ProportionController {
 
     }
 
-    public static void calculatorColdStart(Issue bugsToDo, List<Release> releaseList) throws IOException {
+    public static float calculatorColdStart(/*Issue bugsToDo, List<Release> releaseList*/) throws IOException {
 
-        System.out.println("entrato in cold start, bug: " + bugsToDo.getKey());
+        //System.out.println("entrato in cold start, bug: " + bugsToDo.getKey());
         List<Float> p_tot = new ArrayList<>();
         float p;
         float p_coldStart;
         int count;
         float p_proj;
         List<String> listProjName = new ArrayList<>();
-        List<Release> listReleaseColdStart = new ArrayList<>();
+        //List<Release> listReleaseColdStart = new ArrayList<>();
         List<Issue> listIssueColdStart = new ArrayList<>();
         List<Issue> listIssueCSWithIV = new ArrayList<>();
         //todo: aggiungere enum oppure aggiungi altri progetti alla lisfa
@@ -110,7 +111,7 @@ public class ProportionController {
         for(String projName : listProjName) {
             //ora prendo le release
             JiraController jiraControl = new JiraController();
-            listReleaseColdStart = jiraControl.getReleases(projName);
+            //listReleaseColdStart = jiraControl.getReleases(projName);
             listIssueColdStart = jiraControl.getIssues(projName);
             count = 0;
             p_proj = 0;
@@ -133,7 +134,7 @@ public class ProportionController {
             p_coldStart = p_tot.get(p_tot.size() / 2);
         }
 
-        calculatorIV(bugsToDo, p_coldStart, releaseList);
+        return p_coldStart;
 
     }
     public static float pCalc(int ivId, int ovId, int fvId){

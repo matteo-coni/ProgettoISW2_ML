@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="Modificata la funzione getAffectedVersions per risolvere problema quando mancano le releaseDate">
+    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="Aggiunta classe ProportionController, attributo issue.id e metodi per prop incremental e coldstart">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/JiraController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/JiraController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/ProportionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/ProportionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/Issue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Issue.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,7 +88,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1680595239176</updated>
-      <workItem from="1680595240701" duration="90848000" />
+      <workItem from="1680595240701" duration="96796000" />
     </task>
     <task id="LOCAL-00001" summary="Add getReleases and main">
       <created>1680622019931</created>
@@ -126,7 +125,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681203498800</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Aggiunta classe ProportionController, attributo issue.id e metodi per prop incremental e coldstart">
+      <created>1681420764040</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1681420764040</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -138,6 +144,7 @@
     <MESSAGE value="Aggiunti metodi per creare la lista di bugs" />
     <MESSAGE value="Aggiunto metodo per implementare (todo) proportion" />
     <MESSAGE value="Modificata la funzione getAffectedVersions per risolvere problema quando mancano le releaseDate" />
-    <option name="LAST_COMMIT_MESSAGE" value="Modificata la funzione getAffectedVersions per risolvere problema quando mancano le releaseDate" />
+    <MESSAGE value="Aggiunta classe ProportionController, attributo issue.id e metodi per prop incremental e coldstart" />
+    <option name="LAST_COMMIT_MESSAGE" value="Aggiunta classe ProportionController, attributo issue.id e metodi per prop incremental e coldstart" />
   </component>
 </project>

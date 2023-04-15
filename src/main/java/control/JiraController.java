@@ -256,8 +256,26 @@ public class JiraController {
         return id;
     }
     public static List<Release> halfReleases( List<Release> allReleaseList){
-        List<Release> listHalfRelease = new ArrayList<>();
-        //to do
-        return  listHalfRelease;
+        //List<Release> listHalfRelease = new ArrayList<>();
+        //todo
+        int halfSize = allReleaseList.size() / 2;
+
+        return  allReleaseList.subList(0,halfSize);
+    }
+
+    public static List<Issue> halfIssues (List<Issue> allIssueList){
+         int halfSize = allIssueList.size() / 2;
+         return allIssueList.subList(0,halfSize);
+    }
+
+    //in cleanOvFv tolgo tutti i bug che hanno ov e fv = 1 dopo aver fatto proportion e dopo aver tolgo la metà dei bug
+    public static List<Issue> cleanOvFv (List<Issue> bugsList){
+        List<Issue> listBugFinal = new ArrayList<>();
+        for(Issue bug : bugsList){
+            if(bug.getOv().getId() != 1 && (bug.getFv().getId() != 1)){
+                listBugFinal.add(bug);
+            }
+        }
+        return listBugFinal;
     }
 }
