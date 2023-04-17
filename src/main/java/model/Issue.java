@@ -12,6 +12,8 @@ public class Issue {
 
     private int num;
 
+    private boolean coldStartDo;
+
     public Issue(String key, Release iv, Release ov, Release fv, List<Release> av, int num) {
         this.key = key;
         this.iv = iv;
@@ -68,4 +70,5 @@ public class Issue {
     public void setNum(int num) {
         this.num = num;
     }
+
 }

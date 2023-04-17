@@ -42,7 +42,7 @@ public class ProportionController {
             }
         }
         pColdStart = calculatorColdStart();
-       for (Issue bugsToDo : bugsListToDo){
+       for (Issue bugsToDo : bugsListToDo){         //uso due liste diverse per evitare che un p di un bug calcolato mi aiuti a calcolarne un'altra
            count = 0;
            p_tot = 0;
            for (Issue bug : bugsListWithIv){
@@ -62,7 +62,9 @@ public class ProportionController {
                //calculatorColdStart(bugsToDo, releaseList); //se count==0 significa che non c'è nessun bug con iv valido prima di esso e va applicato cold start
                calculatorIV(bugsToDo,pColdStart, releaseList);
            } else {
+               System.out.println("bug: " + bugsToDo.getKey() + " p: " + p_tot); //prova stampa p
                calculatorIV(bugsToDo, p_tot, releaseList);
+
            }
        }
 
@@ -79,16 +81,16 @@ public class ProportionController {
         if (fvIdB==ovIdB) {
             ivIdB = (fvIdB - (float) (1) * p); // qui metto 1 per ovviare al problema di fv==ov, ma resta il problema di quando fv e ov sono uguali ad 1 e viene 1
         } else {
-            ivIdB = fvIdB - (fvIdB - ovIdB) * p; //iv = fv-(fv-ov)*p se ov e fv sono uguali fv-ov si annulla e viene semopre iv = fv
+            ivIdB = fvIdB - (fvIdB - ovIdB) * p; //iv = fv-(fv-ov)*p se ov e fv sono uguali fv-ov si annulla e viene sempre iv = fv
         }
 
         for(Release rel : releaseList){
-            if(rel.getId() == Math.round(ivIdB)){ //Math.round per approssimare
+            if(rel.getId() == Math.round(ivIdB)){ //Math.round per approssimare difetto se <0.5, eccesso se >=0.5
                 relIv = rel;
             }
         }
         if(relIv==null) relIv = releaseList.get(0); //se l'indice dell'iv viene 0, quindi una release che non esiste, la forza ad 1
-        //if(relIv!=null) System.out.println(relIv.getId());
+
         bugsToDo.setIv(relIv);
 
     }
@@ -106,7 +108,9 @@ public class ProportionController {
         List<Issue> listIssueColdStart = new ArrayList<>();
         List<Issue> listIssueCSWithIV = new ArrayList<>();
         //todo: aggiungere enum oppure aggiungi altri progetti alla lisfa
-        listProjName.add("ZOOKEEPER");
+        //listProjName.add("ZOOKEEPER");
+        //listProjName.add("AVRO");
+        listProjName.add("STORM");
         //for su tutti i progetti scelti, per ora con lista
         for(String projName : listProjName) {
             //ora prendo le release
@@ -117,16 +121,22 @@ public class ProportionController {
             p_proj = 0;
             for(Issue bug : listIssueColdStart){
                 if(bug.getIv()!=null){
-                    p = pCalc(bug.getIv().getId(), bug.getOv().getId(), bug.getFv().getId());
-                    count++;
-                    p_proj += p;
+                    if(bug.getOv()!=bug.getFv()){
+                        p = pCalc(bug.getIv().getId(), bug.getOv().getId(), bug.getFv().getId());
+                        count++;
+                        p_proj += p;
+                    }
                 }
+
             }
+
             p_proj = p_proj / count;
             p_tot.add(p_proj);
         }
 
         p_tot.sort(Comparator.comparing(o -> o));
+
+
 
         if (p_tot.size() % 2 == 0) {
             p_coldStart = (p_tot.get(p_tot.size() / 2) + p_tot.get(p_tot.size() / 2 - 1)) / 2;
@@ -141,5 +151,37 @@ public class ProportionController {
         float p = (float)(fvId - ivId) / (fvId - ovId);
 
         return p;
+    }
+
+    public void calculatorAvAfterProportion(List<Issue> bugsList, List<Release> releaseList){
+
+        int idIv;
+        int lastId;
+        int i;
+
+
+
+        for(Issue bug: bugsList){
+            List<Release> listAv = new ArrayList<>();
+
+            if (bug.getAv().isEmpty()){
+                //System.out.println(bug.getAV();
+                idIv = bug.getIv().getId();
+                lastId = bug.getFv().getId() - 1; //l'ultima prima della fv
+                for(i=idIv; i<=lastId; i++){
+
+                    for (Release rel : releaseList){
+                        Release relAv = null;
+                        if (rel.getId()==i){
+                            relAv = rel;
+                            listAv.add(relAv);
+                            bug.setAv(listAv);
+                        }
+                    }
+                }
+
+            }
+        }
+
     }
 }

@@ -12,6 +12,7 @@ public class Main {
         //System.out.println("Hello world!");
 
         JiraController jiraControl = new JiraController();
+        ProportionController proportionController = new ProportionController();
         List<Release> releaseList = jiraControl.getReleases(projName); //ottengo tutte le release
         List<Issue> bugsList = jiraControl.getIssues(projName); //ottengo tutti i bug (controllati)
         System.out.println(bugsList.size());
@@ -31,12 +32,22 @@ public class Main {
         List<Issue> bugsListProportionHalf = JiraController.halfIssues(bugsList); //tolgo la seconda metà dei bug per lo snoring
         List<Issue> bugsListFinal = JiraController.cleanOvFv(bugsListProportionHalf);
 
+        //stampa senza av
+        /*for (Issue issues : bugsListFinal){
+            System.out.println("num: " + issues.getNum() + " key: " + issues.getKey() + " ov: " + issues.getOv().getName() + " fv: " +issues.getFv().getName() + " indice fv: " + issues.getFv().getId());
+            if (issues.getIv()!=null) System.out.println("indice iv: " + issues.getIv().getId());
+        }*/
+        System.out.println(bugsListFinal.size());
 
+        //ora calcoliamo le av dei bug le quali iv sono state calcolate con proportion
+        proportionController.calculatorAvAfterProportion(bugsListFinal, releaseList);
+
+        //stampa con av
         for (Issue issues : bugsListFinal){
             System.out.println("num: " + issues.getNum() + " key: " + issues.getKey() + " ov: " + issues.getOv().getName() + " fv: " +issues.getFv().getName() + " indice fv: " + issues.getFv().getId());
             if (issues.getIv()!=null) System.out.println("indice iv: " + issues.getIv().getId());
+            for(Release rel: issues.getAv()) System.out.println("av: " + rel.getId());
         }
-        System.out.println(bugsListFinal.size());
 
         //next: retrive git java file and metrics
     }
