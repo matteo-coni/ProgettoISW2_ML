@@ -14,7 +14,7 @@ public class Main {
         JiraController jiraControl = new JiraController();
         ProportionController proportionController = new ProportionController();
         List<Release> releaseList = jiraControl.getReleases(projName); //ottengo tutte le release
-        List<Issue> bugsList = jiraControl.getIssues(projName); //ottengo tutti i bug (controllati)
+        List<Issue> bugsList = jiraControl.getIssues(projName,false); //ottengo tutti i bug (controllati)
         System.out.println(bugsList.size());
 
         for (Release r : releaseList){
@@ -27,11 +27,10 @@ public class Main {
             System.out.println(r.getId() + " " + r.getName() + " " + r.getDate() );
         }
 
-        //proportion
+        //proportion //////NON FUNZIONA SE TOLGO HALF
         List<Issue> bugsListProportion = ProportionController.computeProportion(releaseList, bugsList);
-        List<Issue> bugsListProportionHalf = JiraController.halfIssues(bugsList); //tolgo la seconda metà dei bug per lo snoring
-        List<Issue> bugsListFinal = JiraController.cleanOvFv(bugsListProportionHalf);
-
+        List<Issue> bugsListFinal = JiraController.cleanOvFv(bugsList);
+        //List<Issue> bugsListFinal = bugsList;
         //stampa senza av
         /*for (Issue issues : bugsListFinal){
             System.out.println("num: " + issues.getNum() + " key: " + issues.getKey() + " ov: " + issues.getOv().getName() + " fv: " +issues.getFv().getName() + " indice fv: " + issues.getFv().getId());

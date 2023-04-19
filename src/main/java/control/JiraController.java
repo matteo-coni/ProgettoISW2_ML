@@ -64,7 +64,6 @@ public class JiraController {
             released = jsonObject.getBoolean("released");
             if(released){
                 try {
-                    //String dateRelease = json.getJSONObject(i).get("releaseDate").toString();
                     Release release = new Release(jsonObject.getString("name"), Date.valueOf(jsonObject.getString(MACRODATE)));
                     releaseList.add(release);
 
@@ -87,9 +86,14 @@ public class JiraController {
         return releaseList;
     }
 
-    public List<Issue> getIssues (String projName) throws IOException {
+    public List<Issue> getIssues (String projName, Boolean coldStart) throws IOException {
 
         List<Release> releaseList = JiraController.getReleases(projName);
+        List<Release> halfReleaseList = releaseList; //in modo che
+        //flag per il cold start, se coldStart è true, non devo dimezzare le release perchè sto calcolando cold start
+        if (!coldStart) {
+            halfReleaseList = JiraController.halfReleases(releaseList);
+        }
         List<Issue> listIssues = new ArrayList<>();
         List<Release> avList;
         JSONArray avJSONArray;
@@ -133,14 +137,14 @@ public class JiraController {
                 openingDate = Date.valueOf(creationDate);
 
                 //creo due oggetti fv e ov da inserire poi nella creazione dell'oggetto issue
-                fv = getFixedOpeningVersions(releaseList, resolutionDate);
-                ov = getFixedOpeningVersions(releaseList, openingDate);
+                fv = getFixedOpeningVersions(halfReleaseList, resolutionDate);
+                ov = getFixedOpeningVersions(halfReleaseList, openingDate);
 
 
                 //array dell'oggetto i-esimo, prendendo il campo fields e successivamente le affected versions
                 avJSONArray = issuesArray.getJSONObject(i%1000).getJSONObject(FIELD).getJSONArray("versions");
                 //System.out.println(i+1);
-                List<Release> affectedVersions = getAffectedVersions(avJSONArray, releaseList);
+                List<Release> affectedVersions = getAffectedVersions(avJSONArray, halfReleaseList);
                 avList = affectedVersions;
                 //System.out.println(avList);
 
@@ -155,7 +159,9 @@ public class JiraController {
         return listIssues;
     }
 
-    /*in questo metodo verifico delle condizioni sui vari bug prima di aggiungerli alla lista  */
+    /*in questo metodo verifico delle condizioni sui vari bug prima di aggiungerli alla lista
+    * quando troviamo return true, significa che il ticket è da scartare
+    * */
     public boolean verifyIssue(Issue issue){
         //fv or ov are null
         if (issue.getFv() == null || issue.getOv()==null){
@@ -173,7 +179,6 @@ public class JiraController {
         //con questo diventano 368
         // iv!=null e iv > ov
         if (issue.getIv()!=null && (issue.getOv().getDate().compareTo(issue.getIv().getDate())<0)){
-            //System.out.println(" ov: " + issue.getOv().getDate() + " iv: " + issue.getIv().getDate());
             return true;
         }
 
@@ -185,18 +190,25 @@ public class JiraController {
         Issue newIssue = null;
         Release iv = null;
         //se la lista delle av non è vuota, allora significa che è presente iv e posso inserirla
+        //ordino le av e prendo come iv la prima della lista ordinata
         if(!avList.isEmpty()){
-            //to do: aggiungere controllo per vedere se la più vecchia av (iv) è dopo l'ov. in quel caso crea comunque ma con iv null e av=[]
             avList.sort(Comparator.comparing(o -> o.getDate().toString()));
             iv = avList.get(0);
-
             newIssue = new Issue(key, iv, ov, fv, avList, i);
-        } else { //se non è presente l'av, non lo è nemmeno l'iv, quindi la imposto per ora uguale a null
+        } else {
+            //se non è presente l'av, non lo è nemmeno l'iv, quindi la imposto per ora uguale a null
             newIssue = new Issue(key, null, ov, fv, avList, i);
         }
 
         return newIssue;
     }
+
+    /*
+      in questo metodo ottengo la prima release successiva alla data passata come parametro
+      se passo come date la data di apertura del ticket, ottengo l'opening version
+      se passo la data di chiusura, ottengo la fix version
+     */
+
     public Release getFixedOpeningVersions(List<Release> releaseList, Date date) {
 
         Release rel = null;
@@ -263,16 +275,13 @@ public class JiraController {
         return  allReleaseList.subList(0,halfSize);
     }
 
-    public static List<Issue> halfIssues (List<Issue> allIssueList){
-         int halfSize = allIssueList.size() / 2;
-         return allIssueList.subList(0,halfSize);
-    }
-
-    //in cleanOvFv tolgo tutti i bug che hanno ov e fv = 1 dopo aver fatto proportion e dopo aver tolgo la metà dei bug
+    //in cleanOvFv tolgo tutti i bug che hanno ov e fv = 1 dopo aver fatto proportion
     public static List<Issue> cleanOvFv (List<Issue> bugsList){
         List<Issue> listBugFinal = new ArrayList<>();
         for(Issue bug : bugsList){
-            if(bug.getOv().getId() != 1 && (bug.getFv().getId() != 1)){
+            if(bug.getOv().getId() == 1 && (bug.getFv().getId() == 1)){
+                continue;
+            } else {
                 listBugFinal.add(bug);
             }
         }

@@ -8,12 +8,20 @@ import java.util.*;
 
 public class ProportionController {
 
+    private static int  THREESHOLDCOLDSTART = 5;
+
+    /*
+       è possibile fare una discussione sull'arrotondamento del valore di iv calcolato con proportion
+       potremmo vedere in quanti casi viene approssimato per difetto e quanti per eccesso e magari fare
+       una proporzione/studio e vedere se poteva essere approssimato sempre per difetto o eccesso
+     */
     public static List<Issue> computeProportion(List<Release> releaseList, List<Issue> bugsList) throws IOException {
 
         List<Issue> bugsListProportion = new ArrayList<>();
         List<Issue> bugsListToDo = new ArrayList<>();
         List<Issue> bugsListWithIv = new ArrayList<>();
-        /*qui ora devo prendere la lista bugsList e verificare quali bug non hanno l'av e l'iv
+        /*
+          qui ora devo prendere la lista bugsList e verificare quali bug non hanno l'av e l'iv
           su quei bug devo calcolare l'iv (e poi l'avlist) in base al valore p calcolato o con cold start o con incremental
           p = (fv - iv)/(fv - ov) e iv = fv-(fv-ov)*p
 
@@ -24,8 +32,8 @@ public class ProportionController {
           se uso incremental -> calcolo p come la media tra i difetti fixati nelle versioni precedenti, riferita a quel progetto
           ovvero se sto considerando il bug senza iv numero 10, calcolo p di tutti i bug precedenti a 10 che avevano gia l'iv
           e faccio la media.
-
          */
+
         //increment
         float p = 0;
         float p_tot = 0;
@@ -41,16 +49,32 @@ public class ProportionController {
                 bugsListWithIv.add(bug);
             }
         }
+
+        //calcolo una sola volta
         pColdStart = calculatorColdStart();
-       for (Issue bugsToDo : bugsListToDo){         //uso due liste diverse per evitare che un p di un bug calcolato mi aiuti a calcolarne un'altra
+
+        /*
+          uso due liste diverse per evitare che un p di un bug calcolato con proportion -
+          mi aiuti a calcolarne un'altro. Ovvero cosi dato un bug n. 10 calcolato con proportion,
+          esso non potrà essere utilizzato per calcolare il bug n.15 sempre con proportion (<-esempio)
+        */
+        for (Issue bugsToDo : bugsListToDo){
            count = 0;
            p_tot = 0;
            for (Issue bug : bugsListWithIv){
-               if (bug.getNum() < bugsToDo.getNum()){
+               /*
+                 qui devo controllare che la FV di tutti i bug che uso per calcolare p
+                 sia minore (temporalmente) della OV del bug che sto prendendo in considerazione
+                 In altre parole, un bug, per poter essere utilizzato nel calcolo di p,
+                 deve essere chiuso prima dell'apertura del ticket del bug considerato
+               */
+               if (bug.getFv().getId() < bugsToDo.getOv().getId()){
                    ivId = bug.getIv().getId();
                    ovId = bug.getOv().getId();
                    fvId = bug.getFv().getId();
-                   if (fvId != ovId) { //per evitare lo zero
+
+                   //per evitare lo zero al denominatore
+                   if (fvId != ovId) {
                        p = pCalc(ivId, ovId, fvId);
                        count++;
                        p_tot = p_tot + p;
@@ -58,8 +82,12 @@ public class ProportionController {
                }
            }
            p_tot = (float)(p_tot/count);
-           if(count < 5) {
-               //calculatorColdStart(bugsToDo, releaseList); //se count==0 significa che non c'è nessun bug con iv valido prima di esso e va applicato cold start
+
+           /*
+             faccio cold start se il numero dei ticket utilizzati per il calcolo
+             di p è minore di 5
+            */
+           if(count < THREESHOLDCOLDSTART) {
                calculatorIV(bugsToDo,pColdStart, releaseList);
            } else {
                System.out.println("bug: " + bugsToDo.getKey() + " p: " + p_tot); //prova stampa p
@@ -73,7 +101,7 @@ public class ProportionController {
     }
 
     public static void calculatorIV(Issue bugsToDo, float p, List<Release> releaseList){
-        //System.out.println("entrato in calcultaor iv bug: " + bugsToDo.getKey() + " " + p) ;
+
         Release relIv = null;
         float ivIdB;
         int ovIdB = bugsToDo.getOv().getId();
@@ -85,7 +113,7 @@ public class ProportionController {
         }
 
         for(Release rel : releaseList){
-            if(rel.getId() == Math.round(ivIdB)){ //Math.round per approssimare difetto se <0.5, eccesso se >=0.5
+            if(rel.getId() == Math.round(ivIdB)){ //Math.round per approssimare, difetto se <0.5, eccesso se >=0.5
                 relIv = rel;
             }
         }
@@ -95,55 +123,51 @@ public class ProportionController {
 
     }
 
-    public static float calculatorColdStart(/*Issue bugsToDo, List<Release> releaseList*/) throws IOException {
+    public static float calculatorColdStart() throws IOException {
 
-        //System.out.println("entrato in cold start, bug: " + bugsToDo.getKey());
         List<Float> p_tot = new ArrayList<>();
         float p;
         float p_coldStart;
         int count;
         float p_proj;
         List<String> listProjName = new ArrayList<>();
-        //List<Release> listReleaseColdStart = new ArrayList<>();
-        List<Issue> listIssueColdStart = new ArrayList<>();
-        List<Issue> listIssueCSWithIV = new ArrayList<>();
+        List<Issue> listIssueColdStart;// = new ArrayList<>();
+
         //todo: aggiungere enum oppure aggiungi altri progetti alla lisfa
-        //listProjName.add("ZOOKEEPER");
-        //listProjName.add("AVRO");
-        listProjName.add("STORM");
+        listProjName.add("TAJO");
+        //listProjName.add("STORM");
+
         //for su tutti i progetti scelti, per ora con lista
         for(String projName : listProjName) {
-            //ora prendo le release
+            //ora prendo i bug
             JiraController jiraControl = new JiraController();
-            //listReleaseColdStart = jiraControl.getReleases(projName);
-            listIssueColdStart = jiraControl.getIssues(projName);
+            listIssueColdStart = jiraControl.getIssues(projName, true);
             count = 0;
             p_proj = 0;
             for(Issue bug : listIssueColdStart){
                 if(bug.getIv()!=null){
                     if(bug.getOv()!=bug.getFv()){
                         p = pCalc(bug.getIv().getId(), bug.getOv().getId(), bug.getFv().getId());
+                        System.out.println(bug.getKey() + "    " + p);
                         count++;
                         p_proj += p;
                     }
                 }
 
             }
-
+            System.out.println(p_proj);
             p_proj = p_proj / count;
             p_tot.add(p_proj);
         }
-
-        p_tot.sort(Comparator.comparing(o -> o));
-
-
-
+        System.out.println(p_tot);
+        p_tot.sort(Comparator.comparing(o -> o)); //ordino la lista dei p dei vari progetti
+        //qui prendo la mediana
         if (p_tot.size() % 2 == 0) {
             p_coldStart = (p_tot.get(p_tot.size() / 2) + p_tot.get(p_tot.size() / 2 - 1)) / 2;
         } else {
             p_coldStart = p_tot.get(p_tot.size() / 2);
         }
-
+        System.out.println(p_coldStart);
         return p_coldStart;
 
     }
@@ -159,13 +183,11 @@ public class ProportionController {
         int lastId;
         int i;
 
-
-
         for(Issue bug: bugsList){
             List<Release> listAv = new ArrayList<>();
 
-            if (bug.getAv().isEmpty()){
-                //System.out.println(bug.getAV();
+            //if (bug.getAv().isEmpty()){ //l'if lo metto solo se voglio calcolare le av soltanto su i bug che ho calcolato con proportion
+            //in questo modo li ricalcolo tutti
                 idIv = bug.getIv().getId();
                 lastId = bug.getFv().getId() - 1; //l'ultima prima della fv
                 for(i=idIv; i<=lastId; i++){
@@ -180,7 +202,7 @@ public class ProportionController {
                     }
                 }
 
-            }
+            //}
         }
 
     }
