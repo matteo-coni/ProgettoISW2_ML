@@ -10,6 +10,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.revwalk.filter.MessageRevFilter;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
@@ -28,25 +29,27 @@ import java.util.List;
 
 public class GitController {
 
-    public static void main(String[] args) throws IOException, GitAPIException {
-
-        String jiraPattern = "BOOKEEPER-\\d+";
-        String remoteUrl = "https://github.com/apache/bookkeeper.git";
-        String localPath = "/Users/matteo/IdeaProjects/Prova_cloneJgit";
+    //public static void retrieveJavaFile() throws IOException, GitAPIException {
+    public static void main (String[] args) throws IOException, GitAPIException {
+        /*
+          In questo metodo prendo i file .java per ogni versione
+          TODO: metterli in una lista di model.File con intanto nome e versione
+         */
+        String jiraPattern = "BOOKEEPER-(\\d+)";
+        String localPath = "/Users/matteo/IdeaProjects/bookkeeper";
         File dir = new File(localPath);
 
+        try (Git git = Git.open(new File(localPath))){
 
-
-
-        try (Git git = Git.cloneRepository()
-                .setURI(remoteUrl)
-                .setDirectory(dir)
-                .call()) {
-
-            List<Ref> branches = git.branchList().call();
-            System.out.println(branches.size());
-
-            Iterable<RevCommit> commits = git.log().all().call();
+            Iterable<RevCommit> commits = git.log().all().setRevFilter(RevFilter.NO_MERGES)
+                    .setRevFilter(MessageRevFilter.create("BOOKKEEPER-")).call();
+            //cosi prendo tutti i commit
+            // giustooooooo Iterable<RevCommit> commits = git.log().all().call();
+            //RevFilter revFilter = RevFilter.message(jiraPattern);
+            //Iterable<RevCommit> commits = git.log().setRevFilter(MessageRevFilter.create(jiraPattern)).call();
+            //int count = 0;
+            //Iterable<RevCommit> commits = git.log().all().setRevFilter(msgFilter).call();
+            //Iterable<RevCommit> commits = git.log().setRevFilter(MessageRevFilter.create("BOOKKEEPER-"));//.call();
             int count = 0;
             for (RevCommit commit : commits) {
                 System.out.println("Commit: " + commit.getName() + " " + commit.getShortMessage());
@@ -54,40 +57,37 @@ public class GitController {
             }
             System.out.println(count);
 
-            try (Git gits = Git.open(new File(localPath))) {
-                List<Ref> branchess = gits.branchList().call();
-                for (Ref branch : branchess) {
-                    try (RevWalk revWalk = new RevWalk(git.getRepository())) {
-                        RevCommit commit = revWalk.parseCommit(branch.getObjectId());
-                        revWalk.markStart(commit);
-                        Iterator<RevCommit> commitIterator = revWalk.iterator();
-                        while (commitIterator.hasNext()) {
-                            RevCommit rev = commitIterator.next();
-                            //System.out.println("Commit " + rev.getName());
-                            String version = getVersion(gits, rev);
-                            TreeWalk treeWalk = new TreeWalk(git.getRepository());
-                            treeWalk.addTree(rev.getTree());
-                            treeWalk.setRecursive(true);
-                            int count2 = 0;
-                            while (treeWalk.next()) {
-                                if (!treeWalk.isSubtree() && treeWalk.getPathString().endsWith(".java") && !treeWalk.getPathString().contains("/test/")) {
-                                    count2++;
-                                    System.out.println("File " + treeWalk.getPathString() + " file numero: " + count2 + "  nella versione " + version);
-                                }
-                            }
-                        }
-                    }
-                    System.out.println(branchess.size());
-                }
-            }
+            //qui prendo i vari branch (ma per ora è 1 solo in book)
+            //e prendo tutti i file sfruttando il cammino ad albero
+            List<Ref> branches = git.branchList().call();
+            for (Ref branch : branches) {
+                try (RevWalk revWalk = new RevWalk(git.getRepository())) {
+                      RevCommit commit = revWalk.parseCommit(branch.getObjectId());
+                      revWalk.markStart(commit);
+                      Iterator<RevCommit> commitIterator = revWalk.iterator();
 
+                      while (commitIterator.hasNext()) {
+                          RevCommit rev = commitIterator.next();
+                          //System.out.println("Commit " + rev.getName());
+                          String version = getVersion(git, rev);
+                          TreeWalk treeWalk = new TreeWalk(git.getRepository());
+                          treeWalk.addTree(rev.getTree());
+                          treeWalk.setRecursive(true);
+                          int count2 = 0;
+                          while (treeWalk.next()) {
+                              if (!treeWalk.isSubtree() && treeWalk.getPathString().endsWith(".java") && !treeWalk.getPathString().contains("/test/")) {
+                                  count2++;
+                                  //System.out.println("File " + treeWalk.getPathString() + " file numero: " + count2 + "  nella versione " + version);
+                              }
+                          }
+                      }
+                }
+                System.out.println(branches.size());
+            }
 
         } catch (GitAPIException e) {
             System.out.println("Exception occurred while cloning repository: " + e.getMessage());
-        } finally {
-            deleteDirectory(dir);
         }
-
     }
 
     private static String getVersion(Git git, RevCommit commit) throws GitAPIException, IOException {
@@ -98,6 +98,9 @@ public class GitController {
                 ObjectId tagObjectId = tag.getObjectId();
                 RevWalk revWalk = new RevWalk(git.getRepository());
                 RevTag tagObject = revWalk.parseTag(tagObjectId);
+
+                System.out.println(tagObject.getTagName()); //prova
+
                 revWalk.dispose();
                 if (tagObject.getObject().equals(commit)) {
                     return tag.getName();
