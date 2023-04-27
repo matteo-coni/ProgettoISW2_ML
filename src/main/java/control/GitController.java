@@ -22,6 +22,8 @@ import org.eclipse.jgit.util.io.DisabledOutputStream;
 
 import java.util.List;
 
+import static control.MetricsController.computeMetrics;
+
 public class GitController {
 
     private Git git;
@@ -232,10 +234,18 @@ public class GitController {
 
         setCommitList(commitDividedForRelease, listAllFiles);
 
-        System.out.println(listAllFiles.get(2).get(2).getFilename());
-        List<RevCommit> listcom = listAllFiles.get(2).get(2).getListCommmit();
+        /*System.out.println(listAllFiles.get(0).get(0).getFilename() + " version: " + listAllFiles.get(0).get(0).getRelease().getName());
+        List<RevCommit> listcom = listAllFiles.get(0).get(0).getListCommmit();
         for(RevCommit com : listcom){
             System.out.println(com.getShortMessage());
+        }*/
+
+        for(int i=0; i < listAllFiles.size(); i++) {
+            for(int j=0; j<(listAllFiles.get(i).size()-1); j++) {
+                System.out.println(j + " ----- " + listAllFiles.get(i).size() );
+                computeMetrics(listAllFiles.get(i).get(j));
+            }
+
         }
 
 
