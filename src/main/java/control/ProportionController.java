@@ -134,7 +134,7 @@ public class ProportionController {
         List<String> listProjName = new ArrayList<>();
         List<Issue> listIssueColdStart;// = new ArrayList<>();
 
-        //todo: aggiungere enum oppure aggiungi altri progetti alla lisfa
+        //todo: aggiungere enum oppure aggiungi altri progetti alla lista con criterio
         listProjName.add("TAJO");
         listProjName.add("STORM");
 

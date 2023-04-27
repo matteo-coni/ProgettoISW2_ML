@@ -18,7 +18,7 @@ public class Release {
     public Release(String name, Date date ) {
         this.name = name;
         this.date = date;
-        //this.id = null;
+
     }
 
 

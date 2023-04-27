@@ -9,7 +9,6 @@ public class Main {
 
     private static String projName = "BOOKKEEPER";
     public static void main(String[] args) throws IOException {
-        //System.out.println("Hello world!");
 
         JiraController jiraControl = new JiraController();
         ProportionController proportionController = new ProportionController();
@@ -27,15 +26,10 @@ public class Main {
             System.out.println(r.getId() + " " + r.getName() + " " + r.getDate() );
         }
 
-        //proportion //////NON FUNZIONA SE TOLGO HALF
+
         List<Issue> bugsListProportion = ProportionController.computeProportion(releaseList, bugsList);
         List<Issue> bugsListFinal = JiraController.cleanOvFv(bugsList);
-        //List<Issue> bugsListFinal = bugsList;
-        //stampa senza av
-        /*for (Issue issues : bugsListFinal){
-            System.out.println("num: " + issues.getNum() + " key: " + issues.getKey() + " ov: " + issues.getOv().getName() + " fv: " +issues.getFv().getName() + " indice fv: " + issues.getFv().getId());
-            if (issues.getIv()!=null) System.out.println("indice iv: " + issues.getIv().getId());
-        }*/
+
         System.out.println(bugsListFinal.size());
 
         //ora calcoliamo le av dei bug le quali iv sono state calcolate con proportion

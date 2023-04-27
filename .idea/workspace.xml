@@ -4,11 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="bug fix per i controlli su proportion&#10;introdotto metodo in gitcontroller per ottenere lista dei file .java (non funziona bene la versione)">
-      <change afterPath="$PROJECT_DIR$/src/main/java/model/File.java" afterDir="false" />
+    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="fix GitController per recuperare i commit BOOKKEEPER-xxx">
+      <change afterPath="$PROJECT_DIR$/src/main/java/control/MetricsController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/GitController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/GitController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/control/JiraController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/JiraController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/ProportionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/ProportionController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/File.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/FileJava.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/Release.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Release.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,7 +107,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1680595239176</updated>
-      <workItem from="1680595240701" duration="140910000" />
+      <workItem from="1680595240701" duration="190295000" />
     </task>
     <task id="LOCAL-00001" summary="Add getReleases and main">
       <created>1680622019931</created>
@@ -168,7 +172,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681916231140</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="fix GitController per recuperare i commit BOOKKEEPER-xxx">
+      <created>1682002408321</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1682002408321</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -184,6 +195,7 @@
     <MESSAGE value="Aggiunti metodi halfRelease, halfIssue e cleanOvFv per togliere la metà dei bug ed elimianre ov=fv=1" />
     <MESSAGE value="Aggiunto metodo per calcolare av dopo aver fatto proportion" />
     <MESSAGE value="bug fix per i controlli su proportion&#10;introdotto metodo in gitcontroller per ottenere lista dei file .java (non funziona bene la versione)" />
-    <option name="LAST_COMMIT_MESSAGE" value="bug fix per i controlli su proportion&#10;introdotto metodo in gitcontroller per ottenere lista dei file .java (non funziona bene la versione)" />
+    <MESSAGE value="fix GitController per recuperare i commit BOOKKEEPER-xxx" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix GitController per recuperare i commit BOOKKEEPER-xxx" />
   </component>
 </project>

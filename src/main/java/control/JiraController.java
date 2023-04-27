@@ -267,9 +267,9 @@ public class JiraController {
         }
         return id;
     }
-    public static List<Release> halfReleases( List<Release> allReleaseList){
+    public static List<Release> halfReleases (List<Release> allReleaseList){
         //List<Release> listHalfRelease = new ArrayList<>();
-        //todo
+
         int halfSize = allReleaseList.size() / 2;
 
         return  allReleaseList.subList(0,halfSize);
