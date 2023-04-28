@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="GitController: costruisco oggetti file con relativi commit">
+    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="Compute lines of code in MetricsController">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/GitController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/GitController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/MetricsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/MetricsController.java" afterDir="false" />
@@ -102,7 +102,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1680595239176</updated>
-      <workItem from="1680595240701" duration="196953000" />
+      <workItem from="1680595240701" duration="208725000" />
     </task>
     <task id="LOCAL-00001" summary="Add getReleases and main">
       <created>1680622019931</created>
@@ -181,7 +181,14 @@
       <option name="project" value="LOCAL" />
       <updated>1682591321819</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Compute lines of code in MetricsController">
+      <created>1682605278701</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1682605278701</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -199,6 +206,7 @@
     <MESSAGE value="bug fix per i controlli su proportion&#10;introdotto metodo in gitcontroller per ottenere lista dei file .java (non funziona bene la versione)" />
     <MESSAGE value="fix GitController per recuperare i commit BOOKKEEPER-xxx" />
     <MESSAGE value="GitController: costruisco oggetti file con relativi commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="GitController: costruisco oggetti file con relativi commit" />
+    <MESSAGE value="Compute lines of code in MetricsController" />
+    <option name="LAST_COMMIT_MESSAGE" value="Compute lines of code in MetricsController" />
   </component>
 </project>

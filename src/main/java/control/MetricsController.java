@@ -10,17 +10,30 @@ import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
 import java.io.*;
-
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MetricsController {
 
 
-    public static void computeMetrics(FileJava fileJava) throws IOException {
+    public static void computeMetrics(FileJava fileJava, List<List<FileJava>> fileJavaList) throws IOException {
 
         System.out.println("\n");
-        System.out.println("release " + fileJava.getRelease().getName() + " file: " + fileJava.getFilename() + " LOC: " + setSizeLoc(fileJava));
-        //todo: problema loc = 0 quando nessun commit tocca quel file -> in questo caso prendi le loc del file precedente
+        int loc = setSizeLoc(fileJava);
+        fileJava.setSizeLoc(loc); //setta l'attributo
+        //se non ci sono commit che toccano un file, esso avrà loc=0, quindi per risolvere prendo le loc del file nella versione precedente
+
+        if(fileJava.getSizeLoc()==0){
+            System.out.println(loc);
+            computeLocWhen0(fileJava, fileJavaList);
+        }
+
+        System.out.println("release " + fileJava.getRelease().getName() + " file: " + fileJava.getFilename() + " LOC: " + fileJava.getSizeLoc());
+
+        int numberAuthors = computeNumberAuthors(fileJava);
+        fileJava.setNumberAuthors(numberAuthors);
+        System.out.println("release " + fileJava.getRelease().getName() + " file: " + fileJava.getFilename() + " LOC: " + fileJava.getSizeLoc() + " nr authors: " + fileJava.getNumberAuthors());
     }
 
     public static int setSizeLoc(FileJava fileJava) throws IOException {
@@ -52,6 +65,7 @@ public class MetricsController {
                  BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
 
                 while ((reader.readLine()) != null) {
+                    //togli il commento sottostante per aggiungere i filtri nel conteggio LOC
                     //if (!line.trim().startsWith("//") && !line.trim().startsWith("/*") && !line.trim().startsWith("*") && !line.trim().isEmpty()) {
                     linesOfCode++;
                     //}
@@ -63,5 +77,34 @@ public class MetricsController {
         }
     }
 
+    public static void computeLocWhen0(FileJava fileJava, List<List<FileJava>> fileJavaList){
+
+        //qui calcolo le LOC dei file che avevano sizeLOC=0, prendendo le loc della versione precedente
+        for(int i = 0; i < fileJavaList.size(); i++){
+            for(int j = 0; j < fileJavaList.get(i).size(); j++){
+
+                int locTemp = fileJavaList.get(i).get(j).getSizeLoc();
+                if(fileJavaList.get(i).get(j).getFilename().equals(fileJava.getFilename()) && locTemp!=0){
+                    fileJava.setSizeLoc(locTemp);
+                    //System.out.println("oooooooooooooo " + "   loc " + fileJava.getSizeLoc());
+                }
+            }
+        }
+    }
+
+    public static int computeNumberAuthors(FileJava fileJava){
+
+        int numberAuthors = 0;
+        List<String> authors = new ArrayList<>();
+        for(RevCommit commit : fileJava.getListCommmit()){
+            String name = commit.getAuthorIdent().getName();
+            if(!authors.contains(name)){
+                authors.add(name);
+            }
+        }
+        numberAuthors = authors.size();
+
+        return numberAuthors;
+    }
 }
 

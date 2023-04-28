@@ -230,32 +230,26 @@ public class GitController {
             List<FileJava> javaFile = getAllFiles(lastCommit);
             listAllFiles.add(javaFile);
         }
+        //settiamo le release per ogni file
         setReleaseFile(listAllFiles,halfReleaseList);
 
+        //settiamo la lista di commit per ogni file
         setCommitList(commitDividedForRelease, listAllFiles);
 
-        /*System.out.println(listAllFiles.get(0).get(0).getFilename() + " version: " + listAllFiles.get(0).get(0).getRelease().getName());
-        List<RevCommit> listcom = listAllFiles.get(0).get(0).getListCommmit();
-        for(RevCommit com : listcom){
-            System.out.println(com.getShortMessage());
-        }*/
-
+        //prendiamo ogni file e ne computiamo le metriche
         for(int i=0; i < listAllFiles.size(); i++) {
-            for(int j=0; j<(listAllFiles.get(i).size()-1); j++) {
-                System.out.println(j + " ----- " + listAllFiles.get(i).size() );
-                computeMetrics(listAllFiles.get(i).get(j));
+            for (int j = 0; j < (listAllFiles.get(i).size()); j++) {
+                System.out.println(j + " ----- " + listAllFiles.get(i).size());
+                computeMetrics(listAllFiles.get(i).get(j), listAllFiles);
             }
-
         }
-
 
          /*   for (Edit edit : formatter.toFileHeader(diff).toEditList()){
                 linesDel += edit.getEndA() + edit.getBeginA();
                 linesAdd += edit.getEndB() + edit.getBeginB();
             }
          */
-
-        }
+    }
 
 }
 
