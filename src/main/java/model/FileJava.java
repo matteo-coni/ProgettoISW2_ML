@@ -23,16 +23,16 @@ public class FileJava {
     private String filename;
     private Release release;
     private List<RevCommit> listCommmit;
-    private int sizeLoc;
-    private int touchedLoc;
-    private int numberAuthors;
-    private int nr;
-    private int addedLoc;
-    private int maxLocAdded;
-    private int avgLocAdded;
-    private int churn;
-    private int maxChurn;
-    private int avgChurn;
+    private int sizeLoc; //
+    private int touchedLoc; //
+    private int numberAuthors; //
+    private int nr; //
+    private int addedLoc; //
+    private int maxLocAdded; //
+    private int avgLocAdded; //
+    private int churn; //
+    private int maxChurn; //
+    private int avgChurn; //
 
 
 

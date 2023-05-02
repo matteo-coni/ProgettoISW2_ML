@@ -52,7 +52,7 @@ public class JiraController {
         return sb.toString();
     }
 
-    public  static List<Release> getReleases(String project) throws IOException {
+    public  List<Release> getReleases(String project) throws IOException {
 
         String url = "https://issues.apache.org/jira/rest/api/2/project/" + project + "/versions";
         List<Release> releaseList = new ArrayList<>();
@@ -88,11 +88,11 @@ public class JiraController {
 
     public List<Issue> getIssues (String projName, Boolean coldStart) throws IOException {
 
-        List<Release> releaseList = JiraController.getReleases(projName);
+        List<Release> releaseList = getReleases(projName);
         List<Release> halfReleaseList = releaseList; //in modo che
         //flag per il cold start, se coldStart è true, non devo dimezzare le release perchè sto calcolando cold start
         if (!coldStart) {
-            halfReleaseList = JiraController.halfReleases(releaseList);
+            halfReleaseList = halfReleases(releaseList);
         }
         List<Issue> listIssues = new ArrayList<>();
         List<Release> avList;
@@ -103,9 +103,9 @@ public class JiraController {
         Date resolutionDate;
         Date openingDate;
 
-        Integer i=0;
-        Integer j=0;
-        Integer total=1;
+        int i=0;
+        int j=0;
+        int total=1;
 
         do {
             // only max 1000 issue each time
@@ -115,7 +115,7 @@ public class JiraController {
             String url = "https://issues.apache.org/jira/rest/api/2/search?jql=project=%22"
                     + projName + "%22AND%22issueType%22=%22Bug%22AND(%22status%22=%22closed%22OR"
                     + "%22status%22=%22resolved%22)AND%22resolution%22=%22fixed%22&fields=key,resolutiondate,versions,created,fixVersions&startAt="
-                    + i.toString() + "&maxResults=" + j.toString();
+                    + Integer.toString(i) + "&maxResults=" + Integer.toString(j);
 
             JSONObject objectJson = readJsonFromUrl(url);
             JSONArray issuesArray = objectJson.getJSONArray("issues");
@@ -267,7 +267,7 @@ public class JiraController {
         }
         return id;
     }
-    public static List<Release> halfReleases (List<Release> allReleaseList){
+    public List<Release> halfReleases (List<Release> allReleaseList){
         //List<Release> listHalfRelease = new ArrayList<>();
 
         int halfSize = allReleaseList.size() / 2;

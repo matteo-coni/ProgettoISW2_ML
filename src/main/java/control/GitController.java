@@ -13,16 +13,12 @@ import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevTree;
-import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.revwalk.filter.MessageRevFilter;
-import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
 
 import java.util.List;
 
-import static control.MetricsController.computeMetrics;
+
 
 public class GitController {
 
@@ -32,12 +28,12 @@ public class GitController {
     private static Repository repository;
 
     public GitController () throws IOException {
-        Git git = Git.open(new File(localPath));
-        Repository repository = git.getRepository();
+        this.git = Git.open(new File(localPath));
+        this.repository = git.getRepository();
     }
 
     public static List<RevCommit>  retrieveAllCommits() throws IOException{
-        //public static void main (String[] args) throws IOException, GitAPIException {
+
         /*
           In questo metodo prendo tutti i commit
          */
@@ -108,9 +104,6 @@ public class GitController {
     public static List<FileJava> getAllFiles(RevCommit commit) throws IOException {
 
 
-        Git git = Git.open(new File(localPath));
-        Repository repository = git.getRepository();
-
         TreeWalk treeWalk = new TreeWalk(repository);
         ObjectId treeId = commit.getTree().getId();
 
@@ -144,6 +137,7 @@ public class GitController {
             i++;
         }
 
+        /* stampa
         int numberRelease = 1;
         for(List<FileJava> fileListRelease : fileJavaList){
             System.out.println("Release number " + numberRelease
@@ -152,14 +146,12 @@ public class GitController {
                 System.out.println(fileJava.getFilename() + "    ---------------      " + fileJava.getRelease().getName());
             }
         numberRelease++;
-        }
+        }*/
     }
 
 
     public static void setCommitList(List<List<RevCommit>> commitList, List<List<FileJava>> fileJavaList) throws IOException, GitAPIException {
 
-        Git git = Git.open(new File(localPath));
-        Repository repository = git.getRepository();
 
         DiffFormatter formatter = new DiffFormatter(DisabledOutputStream.INSTANCE);
         formatter.setRepository(repository);
@@ -176,12 +168,10 @@ public class GitController {
 
                         ObjectId parentID = parent.getId();
                         List<DiffEntry> diffs = formatter.scan(parentID, commitId);
-                        System.out.println("\n");
-                        System.out.println(commit.getShortMessage());
+
 
                         for (DiffEntry diff : diffs) {
 
-                            System.out.println("ch file: " + diff.getNewPath());
                             List<RevCommit> listTemp = new ArrayList<>();
 
                             for (FileJava file : fileJavaList.get(i)) {
@@ -216,6 +206,7 @@ public class GitController {
 
     public static void main(String[] args) throws IOException, GitAPIException {
 
+        GitController gitControl = new GitController();
         List<RevCommit> commitList = retrieveAllCommits();
         JiraController jiraControl = new JiraController();
         List<Release> releaseList = jiraControl.getReleases("BOOKKEEPER");
@@ -236,19 +227,16 @@ public class GitController {
         //settiamo la lista di commit per ogni file
         setCommitList(commitDividedForRelease, listAllFiles);
 
+        MetricsController metricsControl = new MetricsController();
+
         //prendiamo ogni file e ne computiamo le metriche
         for(int i=0; i < listAllFiles.size(); i++) {
             for (int j = 0; j < (listAllFiles.get(i).size()); j++) {
-                System.out.println(j + " ----- " + listAllFiles.get(i).size());
-                computeMetrics(listAllFiles.get(i).get(j), listAllFiles);
+                //System.out.println(j + " ----- " + listAllFiles.get(i).size());
+                metricsControl.computeMetrics(listAllFiles.get(i).get(j), listAllFiles);
             }
         }
 
-         /*   for (Edit edit : formatter.toFileHeader(diff).toEditList()){
-                linesDel += edit.getEndA() + edit.getBeginA();
-                linesAdd += edit.getEndB() + edit.getBeginB();
-            }
-         */
     }
 
 }

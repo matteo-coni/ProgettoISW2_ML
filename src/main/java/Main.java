@@ -20,7 +20,7 @@ public class Main {
             System.out.println(r.getId() + " " + r.getName() + " " + r.getDate() );
         }
 
-        List<Release> halfReleaseList = JiraController.halfReleases(releaseList);
+        List<Release> halfReleaseList = jiraControl.halfReleases(releaseList);
         System.out.println("inizio metà release");
         for (Release r : halfReleaseList){
             System.out.println(r.getId() + " " + r.getName() + " " + r.getDate() );
