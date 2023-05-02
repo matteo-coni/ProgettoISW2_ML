@@ -23,7 +23,7 @@ import java.util.List;
 public class GitController {
 
     private Git git;
-    private static String localPath = "/Users/matteo/IdeaProjects/bookkeeper";
+    private static final String localPath = "/Users/matteo/IdeaProjects/bookkeeper";
 
     private static Repository repository;
 
@@ -193,7 +193,7 @@ public class GitController {
             }
         /*
             in questo metodo prendo in input la lista di commit e di fileJava,
-            li scorro ed utilizzando revTree e TreeWalk mi muovo nell'albero per
+            li scorro e utilizzando revTree e TreeWalk mi muovo nell'albero per
             trovare i file che vengono toccati da quel commit
             se il nome del file è uguale a quello dell'oggetto fileJava del ciclo
             for, lo aggiungo alla lista
@@ -204,9 +204,10 @@ public class GitController {
     }
 
 
-    public static void main(String[] args) throws IOException, GitAPIException {
+    //public static void main(String[] args) throws IOException, GitAPIException {
+    public List<List<FileJava>> loadGitInfo() throws IOException, GitAPIException {
 
-        GitController gitControl = new GitController();
+        new GitController();
         List<RevCommit> commitList = retrieveAllCommits();
         JiraController jiraControl = new JiraController();
         List<Release> releaseList = jiraControl.getReleases("BOOKKEEPER");
@@ -232,11 +233,12 @@ public class GitController {
         //prendiamo ogni file e ne computiamo le metriche
         for(int i=0; i < listAllFiles.size(); i++) {
             for (int j = 0; j < (listAllFiles.get(i).size()); j++) {
-                //System.out.println(j + " ----- " + listAllFiles.get(i).size());
+
                 metricsControl.computeMetrics(listAllFiles.get(i).get(j), listAllFiles);
             }
         }
 
+    return listAllFiles;
     }
 
 }

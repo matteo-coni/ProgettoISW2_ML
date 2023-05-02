@@ -8,7 +8,7 @@ import java.util.*;
 
 public class ProportionController {
 
-    private static int  THREESHOLDCOLDSTART = 5;
+    private final static int  THREESHOLDCOLDSTART = 5;
 
     /*
        è possibile fare una discussione sull'arrotondamento del valore di iv calcolato con proportion
@@ -21,16 +21,16 @@ public class ProportionController {
         List<Issue> bugsListToDo = new ArrayList<>();
         List<Issue> bugsListWithIv = new ArrayList<>();
         /*
-          qui ora devo prendere la lista bugsList e verificare quali bug non hanno l'av e l'iv
+          Qui ora devo prendere la lista bugsList e verificare quali bug non hanno l'av e l'iv
           su quei bug devo calcolare l'iv (e poi l'avlist) in base al valore p calcolato o con cold start o con incremental
           p = (fv - iv)/(fv - ov) e iv = fv-(fv-ov)*p
 
-          se uso cold start -> prendo alcuni progetti scelti, prendo i relativi bug che hanno iv ed av, e su essi mi calcolo p
+          se uso cold start -> prendo alcuni progetti scelti, prendo i relativi bug che hanno iv e av, e su essi mi calcolo p
           di ogni singolo bug e poi quello totale. Successivamente prendo p_total di tutti i progetti e mi calcolo la mediana
           assunzione: non considero che una data di fix di un ticket di un progetto puo essere maggiore della data del ticket
           che sto calcolando
 
-          se uso incremental -> calcolo p come la media tra i difetti fixati nelle versioni precedenti, riferita a quel progetto
+          Se uso incremental -> calcolo p come la media tra i difetti fixati nelle versioni precedenti, riferita a quel progetto
           ovvero se sto considerando il bug senza iv numero 10, calcolo p di tutti i bug precedenti a 10 che avevano gia l'iv
           e faccio la media. Attenzione che fv del bug per p sia prima dell'op del bug da calcolare
          */
@@ -55,8 +55,8 @@ public class ProportionController {
         pColdStart = calculatorColdStart();
 
         /*
-          uso due liste diverse per evitare che un p di un bug calcolato con proportion -
-          mi aiuti a calcolarne un'altro. Ovvero cosi dato un bug n. 10 calcolato con proportion,
+          Uso due liste diverse per evitare che un p di un bug calcolato con proportion -
+          mi aiuti a calcolarne un altro. Ovvero cosi dato un bug n. 10 calcolato con proportion,
           esso non potrà essere utilizzato per calcolare il bug n.15 sempre con proportion (<-esempio)
         */
         for (Issue bugsToDo : bugsListToDo){
@@ -91,7 +91,7 @@ public class ProportionController {
            if(count < THREESHOLDCOLDSTART) {
                calculatorIV(bugsToDo,pColdStart, releaseList);
            } else {
-               System.out.println("bug: " + bugsToDo.getKey() + " p: " + p_tot); //prova stampa p
+               //System.out.println("bug: " + bugsToDo.getKey() + " p: " + p_tot); //prova stampa p
                calculatorIV(bugsToDo, p_tot, releaseList);
 
            }
@@ -149,18 +149,17 @@ public class ProportionController {
                 if(bug.getIv()!=null){
                     if(bug.getOv()!=bug.getFv()){
                         p = pCalc(bug.getIv().getId(), bug.getOv().getId(), bug.getFv().getId());
-                        System.out.println(bug.getKey() + "    " + p);
                         count++;
                         p_proj += p;
                     }
                 }
 
             }
-            System.out.println(p_proj);
+            //System.out.println(p_proj);
             p_proj = p_proj / count;
             p_tot.add(p_proj);
         }
-        System.out.println(p_tot);
+        //System.out.println(p_tot);
         p_tot.sort(Comparator.comparing(o -> o)); //ordino la lista dei p dei vari progetti
         //qui prendo la mediana
         if (p_tot.size() % 2 == 0) {
@@ -168,7 +167,7 @@ public class ProportionController {
         } else {
             p_coldStart = p_tot.get(p_tot.size() / 2);
         }
-        System.out.println(p_coldStart);
+        //System.out.println(p_coldStart);
         return p_coldStart;
 
     }

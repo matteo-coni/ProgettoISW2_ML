@@ -6,12 +6,9 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.Edit;
 import org.eclipse.jgit.diff.RawTextComparator;
-import org.eclipse.jgit.errors.CorruptObjectException;
-import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.patch.FileHeader;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.treewalk.TreeWalk;
@@ -20,7 +17,6 @@ import org.eclipse.jgit.util.io.DisabledOutputStream;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -30,7 +26,7 @@ public class MetricsController {
     public MetricsController() throws IOException {
         String localPath = "/Users/matteo/IdeaProjects/bookkeeper";
         Git git = Git.open(new File(localPath));
-        this.repository = git.getRepository();
+        repository = git.getRepository();
 
     }
     public void computeMetrics(FileJava fileJava, List<List<FileJava>> fileJavaList) throws IOException {
@@ -106,6 +102,7 @@ public class MetricsController {
                 int locTemp = fileJavaList.get(i).get(j).getSizeLoc();
                 if(fileJavaList.get(i).get(j).getFilename().equals(fileJava.getFilename()) && locTemp!=0){
                     fileJava.setSizeLoc(locTemp);
+
                 }
             }
         }
@@ -202,13 +199,11 @@ public class MetricsController {
 
         int sum = 0;
         int average = 0;
-        for(int i=0; i<list.size(); i++){
-            sum += list.get(i);
+        for (Integer integer : list) {
+            sum += integer;
         }
         if (list.size()!= 0){
             average = sum / list.size();
-        } else {
-            average = 0;
         }
 
         return average;

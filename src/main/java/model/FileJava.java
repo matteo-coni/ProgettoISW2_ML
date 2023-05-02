@@ -33,6 +33,8 @@ public class FileJava {
     private int churn; //
     private int maxChurn; //
     private int avgChurn; //
+    private String buggy;
+
 
 
 
@@ -150,4 +152,13 @@ public class FileJava {
     public void setAvgChurn(int avgChurn) {
         this.avgChurn = avgChurn;
     }
+
+    public String getBuggy() {
+        return buggy;
+    }
+
+    public void setBuggy(String buggy) {
+        this.buggy = buggy;
+    }
+
 }
