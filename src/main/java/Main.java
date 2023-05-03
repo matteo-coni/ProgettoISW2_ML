@@ -48,7 +48,7 @@ public class Main {
 
         //next: retrive git java file and metrics
         GitController gitControl = new GitController();
-        List<List<FileJava>> fileJavaList = gitControl.loadGitInfo(); //qui ottengo una lista di file java (model.FileJava) con tutte le metriche calcolate
+        List<List<FileJava>> fileJavaList = gitControl.loadGitInfo(bugsListFinal); //qui ottengo una lista di file java (model.FileJava) con tutte le metriche calcolate
         //gitControl.loadGitInfo();
 
         CsvController csvControl = new CsvController();

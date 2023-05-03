@@ -1,6 +1,8 @@
 package control;
 
 import model.FileJava;
+import model.Issue;
+import model.Release;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
@@ -29,7 +31,7 @@ public class MetricsController {
         repository = git.getRepository();
 
     }
-    public void computeMetrics(FileJava fileJava, List<List<FileJava>> fileJavaList) throws IOException {
+    public void computeMetrics(FileJava fileJava, List<List<FileJava>> fileJavaList, List<Issue> bugsList) throws IOException {
 
         System.out.println("\n");
         int loc = setSizeLoc(fileJava);
@@ -50,10 +52,12 @@ public class MetricsController {
         int numberRevision = fileJava.getListCommmit().size();
         fileJava.setNr(numberRevision);
 
+        computeBuggyness(fileJava, bugsList);
+
         System.out.println("release " + fileJava.getRelease().getName() + " file: " + fileJava.getFilename() + " LOC: " + fileJava.getSizeLoc()
                 + " nr authors: " + fileJava.getNumberAuthors() + " LOC TOUCHED: " + fileJava.getTouchedLoc() + " NR: " + fileJava.getNr() + " LOC ADDED: " + fileJava.getAddedLoc()
                 + " MAX LOC ADD: " + fileJava.getMaxLocAdded() + " AVG ADD: " + fileJava.getAvgLocAdded() + " Churn: " + fileJava.getChurn() + " MAX CHURN: " + fileJava.getMaxChurn()
-                + " AVG churn: " + fileJava.getAvgChurn());
+                + " AVG churn: " + fileJava.getAvgChurn() + " Buggy: " + fileJava.getBuggy());
     }
 
     public static int setSizeLoc(FileJava fileJava) throws IOException {
@@ -148,7 +152,7 @@ public class MetricsController {
                         int linesDel = 0;
                         int linesAdd = 0;
 
-                        for (Edit edit : formatter.toFileHeader(diff).toEditList()) {
+                        for (Edit edit : formatter.toFileHeader(diff).toEditList()) { //per ridurre complessita fai due metodi per calcolare linesDel e linesAdd
                             linesDel += edit.getEndA() - edit.getBeginA();
                             linesAdd += edit.getEndB() - edit.getBeginB();
                             churn += Math.abs(linesAdd - linesDel);
@@ -169,6 +173,7 @@ public class MetricsController {
 
             if(!listLocAdded.isEmpty()) { //qui setto le lines add MAX
                 int maxLocAdd = Collections.max(listLocAdded);
+                System.out.println(listLocAdded);
                 fileJava.setMaxLocAdded(maxLocAdd);
             } else {
                 fileJava.setMaxLocAdded(0);
@@ -207,6 +212,46 @@ public class MetricsController {
         }
 
         return average;
+    }
+
+    public static void computeBuggyness(FileJava fileJava, List<Issue> bugsList){
+        /*
+          - per la buggyness, prendo la lista dei commit del fileJava e verifico se fileJava.getCommitList() contiene un commit che ha come shortMessage un
+            BOOKKEEPER-XXX (o xx xxx xxxx) (o ZOO). se si, scorro la lista di tutto i bug, prendo quello che ha il nome uguale a quello che ho appena trovato,
+            prendo la versione, e, se le versioni affette contengono la versione del file, quel file è buggy
+         */
+
+        /*for(RevCommit com : fileJava.getListCommmit()){
+            if(com.getShortMessage().contains("BOOKKEEPER-")){
+                //System.out.println(com.getShortMessage().substring(0,14));
+                for(Issue bug : bugsList){
+                    if(com.getShortMessage().substring(0,13).equals(bug.getKey()) || com.getShortMessage().substring(0,13).equals(bug.getKey())){
+                        System.out.println(bug.getKey() + "   " + bug.getAv() );
+                        for(Release av : bug.getAv()){
+                            if(av.getName().equals(fileJava.getRelease().getName())){
+                                fileJava.setBuggy("Yes");
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }*/
+        fileJava.setBuggy("No");
+        for (Issue bug : bugsList) {
+            String bugKey = bug.getKey();
+            if (bugKey.matches("BOOKKEEPER-\\d+")) {
+                for (RevCommit commit : fileJava.getListCommmit()) {
+                    System.out.println(commit.getShortMessage()+ "      bugkey:  " + bugKey); //prova stampa
+                    if (commit.getShortMessage().contains(bugKey)) {
+                        fileJava.setBuggy("yes");
+                        break;
+                    }
+                }
+            }
+        }
+        //fileJava.setBuggy("No");
+
     }
 }
 

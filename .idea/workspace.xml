@@ -4,15 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="Compute metrics (nr, loc and churn)">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/control/CsvController.java" afterDir="false" />
+    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="Add class CsvController and generated csv_file">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/control/CsvController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/CsvController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/GitController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/GitController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/MetricsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/MetricsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/control/ProportionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/ProportionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/FileJava.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/FileJava.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,7 +104,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1680595239176</updated>
-      <workItem from="1680595240701" duration="232475000" />
+      <workItem from="1680595240701" duration="238186000" />
     </task>
     <task id="LOCAL-00001" summary="Add getReleases and main">
       <created>1680622019931</created>
@@ -207,7 +204,14 @@
       <option name="project" value="LOCAL" />
       <updated>1683061697067</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Add class CsvController and generated csv_file">
+      <created>1683065276368</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1683065276369</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -228,6 +232,7 @@
     <MESSAGE value="Compute lines of code in MetricsController" />
     <MESSAGE value="Compute lines of code (when 0) and authors" />
     <MESSAGE value="Compute metrics (nr, loc and churn)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Compute metrics (nr, loc and churn)" />
+    <MESSAGE value="Add class CsvController and generated csv_file" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add class CsvController and generated csv_file" />
   </component>
 </project>

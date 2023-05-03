@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.*;
 
 import model.FileJava;
+import model.Issue;
 import model.Release;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -205,11 +206,12 @@ public class GitController {
 
 
     //public static void main(String[] args) throws IOException, GitAPIException {
-    public List<List<FileJava>> loadGitInfo() throws IOException, GitAPIException {
+    public List<List<FileJava>> loadGitInfo(List<Issue> bugsList) throws IOException, GitAPIException {
 
         new GitController();
         List<RevCommit> commitList = retrieveAllCommits();
         JiraController jiraControl = new JiraController();
+
         List<Release> releaseList = jiraControl.getReleases("BOOKKEEPER");
         List<Release> halfReleaseList = jiraControl.halfReleases(releaseList);
         //List<Release> halfReleaseList = releaseList; //per tutte le release
@@ -234,7 +236,7 @@ public class GitController {
         for(int i=0; i < listAllFiles.size(); i++) {
             for (int j = 0; j < (listAllFiles.get(i).size()); j++) {
 
-                metricsControl.computeMetrics(listAllFiles.get(i).get(j), listAllFiles);
+                metricsControl.computeMetrics(listAllFiles.get(i).get(j), listAllFiles, bugsList);
             }
         }
 

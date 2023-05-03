@@ -12,7 +12,7 @@ public class CsvController {
 
         String csvFilePath = "filejava_metrics.csv";
         FileWriter csvWriter = new FileWriter(csvFilePath);
-        csvWriter.append("Release, Filename, LOC, NR, Authors, Loc Touched, Loc added, Max LOC added, Avg LOC added, Churn, Max Churn, Avg Churn\n");
+        csvWriter.append("Release, Filename, LOC, NR, Authors, Loc Touched, Loc added, Max LOC added, Avg LOC added, Churn, Max Churn, Avg Churn, Buggy\n");
 
         for(List<FileJava> listFile : fileJavaList){
             for(FileJava fileJava : listFile){
@@ -28,6 +28,7 @@ public class CsvController {
                 csvWriter.append(fileJava.getChurn() + ",");
                 csvWriter.append(fileJava.getMaxChurn() + ",");
                 csvWriter.append(fileJava.getAvgChurn() + ",");
+                csvWriter.append(fileJava.getBuggy() + ",");
                 csvWriter.append("\n");
             }
         }
