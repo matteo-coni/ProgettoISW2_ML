@@ -65,7 +65,7 @@ public class GitController {
                 count++;
             }
 
-            System.out.println(count);
+            //System.out.println(count);
 
         } catch (GitAPIException e) {
             System.out.println("Exception: " + e.getMessage());

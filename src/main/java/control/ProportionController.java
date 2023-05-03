@@ -189,7 +189,7 @@ public class ProportionController {
             //if (bug.getAv().isEmpty()){ //l'if lo metto solo se voglio calcolare le av soltanto su i bug che ho calcolato con proportion
             //in questo modo li ricalcolo tutti
                 idIv = bug.getIv().getId();
-                lastId = bug.getFv().getId() - 1; //l'ultima prima della fv
+                lastId = bug.getFv().getId() -1  ; //l'ultima prima della fv
                 for(i=idIv; i<=lastId; i++){
 
                     for (Release rel : releaseList){
@@ -204,6 +204,15 @@ public class ProportionController {
 
             //}
         }
+        //prova per buggyness
+        /*for(Issue bug2 : bugsList){
+            List<Release> listAv2 = new ArrayList<>();
+            if(bug2.getOv().equals(bug2.getFv())){
+                listAv2 = bug2.getAv();
+                listAv2.add(bug2.getFv());
+                bug2.setAv(listAv2);
+            }
+        }*/
 
     }
 }

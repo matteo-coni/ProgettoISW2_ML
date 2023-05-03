@@ -16,6 +16,7 @@ import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
 
+import javax.sound.midi.SysexMessage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,12 +53,16 @@ public class MetricsController {
         int numberRevision = fileJava.getListCommmit().size();
         fileJava.setNr(numberRevision);
 
-        computeBuggyness(fileJava, bugsList);
+        //computeBuggynessProva(fileJava, bugsList);
 
         System.out.println("release " + fileJava.getRelease().getName() + " file: " + fileJava.getFilename() + " LOC: " + fileJava.getSizeLoc()
                 + " nr authors: " + fileJava.getNumberAuthors() + " LOC TOUCHED: " + fileJava.getTouchedLoc() + " NR: " + fileJava.getNr() + " LOC ADDED: " + fileJava.getAddedLoc()
                 + " MAX LOC ADD: " + fileJava.getMaxLocAdded() + " AVG ADD: " + fileJava.getAvgLocAdded() + " Churn: " + fileJava.getChurn() + " MAX CHURN: " + fileJava.getMaxChurn()
                 + " AVG churn: " + fileJava.getAvgChurn() + " Buggy: " + fileJava.getBuggy());
+
+        for(RevCommit commit : fileJava.getListCommmit()) {
+            System.out.println(commit.getShortMessage());
+        }
     }
 
     public static int setSizeLoc(FileJava fileJava) throws IOException {
@@ -166,14 +171,14 @@ public class MetricsController {
                 }
                 listChurn.add(churn);
                 churnTotal += churn;
-                System.out.println(churnTotal);
+                //System.out.println(churnTotal);
             }
 
             fileJava.setAddedLoc(linesAddTotal); //setto le lines add total
 
             if(!listLocAdded.isEmpty()) { //qui setto le lines add MAX
                 int maxLocAdd = Collections.max(listLocAdded);
-                System.out.println(listLocAdded);
+                //System.out.println(listLocAdded);
                 fileJava.setMaxLocAdded(maxLocAdd);
             } else {
                 fileJava.setMaxLocAdded(0);
@@ -214,13 +219,60 @@ public class MetricsController {
         return average;
     }
 
-    public static void computeBuggyness(FileJava fileJava, List<Issue> bugsList){
+    public List<FileJava> computeBuggynessProva(List<List<FileJava>> fileJavaList, List<Issue> bugsList){
+
+        /*
+            Prendo tutti i file, li scorro, scorro i commit di ognuno, scorro ancora i bug totali e verifico quando un
+            bug è presente nello shortMessage di un commit. In quel caso mi genero una lista temporanea di file buggy
+            con il metodo calcTempList e poi l'aggiungo a una lista buggyFiles da ritornare
+        */
+        List<FileJava> buggyFiles = new ArrayList<>();
+        for(List<FileJava> listFile : fileJavaList){
+            for(FileJava fileJava : listFile){
+                for (RevCommit commit : fileJava.getListCommmit()) {
+                    for (Issue bug : bugsList) {
+                        if (commit.getShortMessage().contains(bug.getKey())) {
+                            List<FileJava> temp = calcTempList(fileJavaList, bug.getAv(), fileJava.getFilename());
+                            buggyFiles.addAll(temp);
+                        }
+                    }
+                }
+            }
+        }
+        return buggyFiles;
+    }
+
+    public List<FileJava> calcTempList(List<List<FileJava>> fileJavaList, List<Release> av, String fileName ) {
+
+        /*
+            qui verifico se il filename dato ha un corrisponde nella lista di file (stesso nome ma versione diversa)
+            e quando lo trovo, scorrendo tutte le av, aggiungo alla lista il file la quale release è identificato come
+            av per quel bug
+         */
+
+        List<FileJava> retList = new ArrayList<>();
+        for (List<FileJava> listFile : fileJavaList) {
+            for (FileJava file : listFile) {
+                if (file.getFilename().equals(fileName)) {
+                    for (Release rel : av) {
+                        if (rel.getName().equals(file.getRelease().getName())) {
+                            retList.add(file);
+                        }
+                    }
+                }
+            }
+
+        }
+        return retList;
+    }
+
+    //public static void computeBuggyness(FileJava fileJava, List<Issue> bugsList){
         /*
           - per la buggyness, prendo la lista dei commit del fileJava e verifico se fileJava.getCommitList() contiene un commit che ha come shortMessage un
             BOOKKEEPER-XXX (o xx xxx xxxx) (o ZOO). se si, scorro la lista di tutto i bug, prendo quello che ha il nome uguale a quello che ho appena trovato,
             prendo la versione, e, se le versioni affette contengono la versione del file, quel file è buggy
          */
-
+        //fileJava.setBuggy("No");
         /*for(RevCommit com : fileJava.getListCommmit()){
             if(com.getShortMessage().contains("BOOKKEEPER-")){
                 //System.out.println(com.getShortMessage().substring(0,14));
@@ -230,6 +282,7 @@ public class MetricsController {
                         for(Release av : bug.getAv()){
                             if(av.getName().equals(fileJava.getRelease().getName())){
                                 fileJava.setBuggy("Yes");
+                                System.out.println("ENTRATO");
                                 return;
                             }
                         }
@@ -237,21 +290,38 @@ public class MetricsController {
                 }
             }
         }*/
-        fileJava.setBuggy("No");
+
+        /*fileJava.setBuggy("No");
         for (Issue bug : bugsList) {
             String bugKey = bug.getKey();
             if (bugKey.matches("BOOKKEEPER-\\d+")) {
                 for (RevCommit commit : fileJava.getListCommmit()) {
-                    System.out.println(commit.getShortMessage()+ "      bugkey:  " + bugKey); //prova stampa
-                    if (commit.getShortMessage().contains(bugKey)) {
+                    //if(fileJava.getRelease().getName().equals("4.1.0")) System.out.println(commit.getShortMessage()+ "      bugkey:  " + bugKey +  " av: " + bug.getAv() + " file rel: " + fileJava.getRelease().getName()); //prova stampa
+                    /*if (commit.getShortMessage().contains(bugKey)) {
+                                fileJava.setBuggy("Yes");
+                    }
+                    /*if(bug.getAv().contains(fileJava.getRelease())) {
+                        System.out.println("SECOND IFFF");
                         fileJava.setBuggy("yes");
-                        break;
+                    }
+                    if (commit.getShortMessage().contains(bugKey)) {
+                        for (Release av : bug.getAv()) {
+                            if (av.getName().equals(fileJava.getRelease().getName())) {
+                                fileJava.setBuggy("Yes");
+                                System.out.println("ENTRATO");
+                                return;
+                            }
+                        }
                     }
                 }
+
+
+
+                        //break;
             }
         }
         //fileJava.setBuggy("No");
 
-    }
+    }*/
 }
 
