@@ -50,7 +50,7 @@ public class Main {
         //gitControl.loadGitInfo();
 
         MetricsController metricsControl = new MetricsController();
-        List<FileJava> tempListFile = metricsControl.computeBuggynessProva(fileJavaList, bugsList);
+        List<FileJava> tempListFile = metricsControl.computeBuggynessProva(fileJavaList, bugsListFinal);
 
 
         int countBuggy = 0;

@@ -60,9 +60,10 @@ public class MetricsController {
                 + " MAX LOC ADD: " + fileJava.getMaxLocAdded() + " AVG ADD: " + fileJava.getAvgLocAdded() + " Churn: " + fileJava.getChurn() + " MAX CHURN: " + fileJava.getMaxChurn()
                 + " AVG churn: " + fileJava.getAvgChurn() + " Buggy: " + fileJava.getBuggy());
 
-        for(RevCommit commit : fileJava.getListCommmit()) {
+
+        /*for(RevCommit commit : fileJava.getListCommmit()) {
             System.out.println(commit.getShortMessage());
-        }
+        }*/
     }
 
     public static int setSizeLoc(FileJava fileJava) throws IOException {
@@ -178,7 +179,7 @@ public class MetricsController {
 
             if(!listLocAdded.isEmpty()) { //qui setto le lines add MAX
                 int maxLocAdd = Collections.max(listLocAdded);
-                //System.out.println(listLocAdded);
+                System.out.println(listLocAdded);
                 fileJava.setMaxLocAdded(maxLocAdd);
             } else {
                 fileJava.setMaxLocAdded(0);
@@ -231,7 +232,7 @@ public class MetricsController {
             for(FileJava fileJava : listFile){
                 for (RevCommit commit : fileJava.getListCommmit()) {
                     for (Issue bug : bugsList) {
-                        if (commit.getShortMessage().contains(bug.getKey())) {
+                        if (commit.getShortMessage().contains(bug.getKey() + ":") || commit.getShortMessage().contains(bug.getKey() + " ")) {
                             List<FileJava> temp = calcTempList(fileJavaList, bug.getAv(), fileJava.getFilename());
                             buggyFiles.addAll(temp);
                         }
