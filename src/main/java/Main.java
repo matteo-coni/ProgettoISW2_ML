@@ -10,7 +10,7 @@ import java.util.List;
 public class Main {
 
     private static String projName = "BOOKKEEPER";
-    public static void main(String[] args) throws IOException, GitAPIException {
+    public static void main(String[] args) throws Exception {
 
         JiraController jiraControl = new JiraController();
         ProportionController proportionController = new ProportionController();
@@ -69,7 +69,10 @@ public class Main {
         System.out.println("Tot file = " + countT);
 
         CsvController csvControl = new CsvController();
-        csvControl.makeCsv(fileJavaList);
+        //genero il file csv
+        csvControl.makeCsv(fileJavaList, projName);
+        //converto il csv in arff e genero il file arff
+        csvControl.generateArff(projName);
 
 
     }

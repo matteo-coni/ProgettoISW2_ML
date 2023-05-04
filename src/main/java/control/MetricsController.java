@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 
+
 public class MetricsController {
 
     private static Repository repository;
@@ -161,9 +162,9 @@ public class MetricsController {
                         for (Edit edit : formatter.toFileHeader(diff).toEditList()) { //per ridurre complessita fai due metodi per calcolare linesDel e linesAdd
                             linesDel += edit.getEndA() - edit.getBeginA();
                             linesAdd += edit.getEndB() - edit.getBeginB();
-                            churn += Math.abs(linesAdd - linesDel);
+                            //churn += Math.abs(linesAdd - linesDel);
                         }
-
+                        churn += Math.abs(linesAdd - linesDel);
                         linesAddTotal += linesAdd;
                         locTouched += linesAdd + linesDel;
                         listLocAdded.add(linesAdd);
@@ -198,7 +199,7 @@ public class MetricsController {
             } else {
                 fileJava.setMaxChurn(0);
             }
-
+            System.out.println(listChurn);
             int averageChurn = computeAverage(listChurn);
             fileJava.setAvgChurn(averageChurn);
 
