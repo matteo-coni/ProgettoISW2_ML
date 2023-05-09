@@ -17,7 +17,7 @@ import weka.core.converters.CSVLoader;
 
 public class CsvController {
 
-    public void makeCsv(List<List<FileJava>> fileJavaList, String projName) throws IOException {
+    public void makeCsv(List<List<FileJava>> fileJavaList, String projName, int countRelease) throws IOException {
 
         List<List<String>> listListString = new ArrayList<>();
 
@@ -45,8 +45,8 @@ public class CsvController {
 
         String csvFilePath = "";
 
-        if(projName.equals("BOOKKEEPER")) csvFilePath = "BOOKKEEPER_filejava_metrics.csv";
-        if(projName.equals("ZOOKEEPER")) csvFilePath = "ZOOKEEPER_filejava_metrics.csv";
+        csvFilePath = projName + "_training_" + countRelease + ".csv";
+        //if(projName.equals("ZOOKEEPER")) csvFilePath = "ZOOKEEPER_filejava_metrics_"  + countRelease + ".csv";
 
 
         String[] header = {"Release", "Filename", "LOC", "NR", "Authors", "Loc Touched", "Loc added", "LOC added",
@@ -65,55 +65,68 @@ public class CsvController {
         printer.close();
         writer.close();
     }
-        /*
-        String csvFilePath = "filejava_metrics.csv";
-        FileWriter csvWriter = new FileWriter(csvFilePath);
-        csvWriter.append("Release, Filename, LOC, NR, Authors, Loc Touched, Loc added, Max LOC added, Avg LOC added, Churn, Max Churn, Avg Churn, Buggy\n");
 
-        for(List<FileJava> listFile : fileJavaList){
-            for(FileJava fileJava : listFile){
-                csvWriter.append(fileJava.getRelease().getName()).append(",");
-                csvWriter.append(fileJava.getFilename()).append(",");
-                csvWriter.append(fileJava.getSizeLoc() + ",");
-                csvWriter.append(fileJava.getNr() + ",");
-                csvWriter.append(fileJava.getNumberAuthors() +",");
-                csvWriter.append(fileJava.getTouchedLoc() +",");
-                csvWriter.append(fileJava.getAddedLoc() + ",");
-                csvWriter.append(fileJava.getMaxLocAdded() + ",");
-                csvWriter.append(fileJava.getAvgLocAdded() + ",");
-                csvWriter.append(fileJava.getChurn() + ",");
-                csvWriter.append(fileJava.getMaxChurn() + ",");
-                csvWriter.append(fileJava.getAvgChurn() + ",");
-                csvWriter.append(fileJava.getBuggy() + ",");
-                csvWriter.append("\n");
-            }
-        }
-        //String [] headers = {"ciao"};
-
-        //CSVPrinter printer = new CSVPrinter(csvWriter, CSVFormat.DEFAULT.withHeader(headers));
-        //printer.printRecord(csvWriter);
-
-        csvWriter.flush();
-        csvWriter.close();
-
-
-    }*/
-
-    public void generateArff(String projName) throws Exception {
+    public void generateArff(String projName, int countRelease, String training) throws Exception {
 
         // load CSV
         CSVLoader loader = new CSVLoader();
-        if(projName.equals("BOOKKEEPER")) loader.setSource(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/BOOKKEEPER_filejava_metrics.csv"));
-        if(projName.equals("ZOOKEEPER")) loader.setSource(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/ZOOKEEPER_filejava_metrics.csv"));
+        loader.setSource(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/" + projName + "_" + training + "_" + countRelease + ".csv"));
+        //if(projName.equals("ZOOKEEPER")) loader.setSource(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/ZOOKEEPER_training_" + countRelease + ".csv"));
         Instances data = loader.getDataSet();//get instances object
 
         // save ARFF
         ArffSaver saver = new ArffSaver();
         saver.setInstances(data);//set the dataset we want to convert
         //and save as ARFF
-        if(projName.equals("BOOKKEEPER")) saver.setFile(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/BOOKKEEPER_output_metrics.arff"));
-        if(projName.equals("ZOOKEEPER")) saver.setFile(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/ZOOKEEPER_output_metrics.arff"));
+        saver.setFile(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/" + projName + "_" + training + "_" + countRelease + ".arff"));
+        //if(projName.equals("ZOOKEEPER")) saver.setFile(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/ZOOKEEPER_training_" + countRelease + ".arff"));
         saver.writeBatch();
     }
 
+
+    public void makeCsvTesting(List<FileJava> fileJavaRel, String projName, int i) throws IOException {
+
+        List<List<String>> listListString = new ArrayList<>();
+
+        for (FileJava fileJava2 : fileJavaRel) {
+            List<String> temp = new ArrayList<>();
+            temp.add(fileJava2.getRelease().getName());
+            temp.add(fileJava2.getFilename());
+            temp.add(String.valueOf(fileJava2.getSizeLoc()));
+            temp.add(String.valueOf(fileJava2.getNr()));
+            temp.add(String.valueOf(fileJava2.getNumberAuthors()));
+            temp.add(String.valueOf(fileJava2.getTouchedLoc()));
+            temp.add(String.valueOf(fileJava2.getAddedLoc()));
+            temp.add(String.valueOf(fileJava2.getMaxLocAdded()));
+            temp.add(String.valueOf(fileJava2.getAvgLocAdded()));
+            temp.add(String.valueOf(fileJava2.getChurn()));
+            temp.add(String.valueOf(fileJava2.getMaxChurn()));
+            temp.add(String.valueOf(fileJava2.getAvgChurn()));
+            temp.add(String.valueOf(fileJava2.getBuggy()));
+            //listListString.add(temp);
+            listListString.add(temp);
+        }
+
+        String csvFilePath = "";
+
+        csvFilePath = projName + "_testing_" + i + ".csv";
+        //if(projName.equals("ZOOKEEPER")) csvFilePath = "ZOOKEEPER_filejava_metrics_"  + countRelease + ".csv";
+
+
+        String[] header2 = {"Release", "Filename", "LOC", "NR", "Authors", "Loc Touched", "Loc added", "LOC added",
+                "Avg LOC added", "Churn", "Max Churn", "Avg Churn", "Buggy"};
+
+
+        FileWriter writer = new FileWriter(csvFilePath);
+
+        CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(header2));
+
+        for (List<String> row : listListString) {
+            printer.printRecord(row);
+        }
+
+        // Chiudi il printer e il writer
+        printer.close();
+        writer.close();
+    }
 }

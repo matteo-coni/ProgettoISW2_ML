@@ -27,15 +27,15 @@ import java.util.List;
 public class MetricsController {
 
     private static Repository repository;
-    public MetricsController() throws IOException {
-        String localPath = "/Users/matteo/IdeaProjects/bookkeeper";
+    public MetricsController(String projName) throws IOException {
+        String localPath = "/Users/matteo/IdeaProjects/" + projName.toLowerCase();
         Git git = Git.open(new File(localPath));
         repository = git.getRepository();
 
     }
     public void computeMetrics(FileJava fileJava, List<List<FileJava>> fileJavaList, List<Issue> bugsList) throws IOException {
 
-        System.out.println("\n");
+        //System.out.println("\n");
         int loc = setSizeLoc(fileJava);
         fileJava.setSizeLoc(loc); //setta l'attributo
         //se non ci sono commit che toccano un file, esso avrà loc=0, quindi per risolvere prendo le loc del file nella versione precedente
@@ -56,11 +56,11 @@ public class MetricsController {
 
         //computeBuggynessProva(fileJava, bugsList);
 
-        System.out.println("release " + fileJava.getRelease().getName() + " file: " + fileJava.getFilename() + " LOC: " + fileJava.getSizeLoc()
+        /*System.out.println("release " + fileJava.getRelease().getName() + " file: " + fileJava.getFilename() + " LOC: " + fileJava.getSizeLoc()
                 + " nr authors: " + fileJava.getNumberAuthors() + " LOC TOUCHED: " + fileJava.getTouchedLoc() + " NR: " + fileJava.getNr() + " LOC ADDED: " + fileJava.getAddedLoc()
                 + " MAX LOC ADD: " + fileJava.getMaxLocAdded() + " AVG ADD: " + fileJava.getAvgLocAdded() + " Churn: " + fileJava.getChurn() + " MAX CHURN: " + fileJava.getMaxChurn()
                 + " AVG churn: " + fileJava.getAvgChurn() + " Buggy: " + fileJava.getBuggy());
-
+        */
 
         /*for(RevCommit commit : fileJava.getListCommmit()) {
             System.out.println(commit.getShortMessage());
@@ -180,12 +180,12 @@ public class MetricsController {
 
             if(!listLocAdded.isEmpty()) { //qui setto le lines add MAX
                 int maxLocAdd = Collections.max(listLocAdded);
-                System.out.println(listLocAdded);
+
                 fileJava.setMaxLocAdded(maxLocAdd);
             } else {
                 fileJava.setMaxLocAdded(0);
             }
-
+            //System.out.println(listLocAdded);
             //ora calcolo e setto la average loc added
             int averageLocAdd = computeAverage(listLocAdded);
             fileJava.setAvgLocAdded(averageLocAdd);
@@ -199,7 +199,7 @@ public class MetricsController {
             } else {
                 fileJava.setMaxChurn(0);
             }
-            System.out.println(listChurn);
+
             int averageChurn = computeAverage(listChurn);
             fileJava.setAvgChurn(averageChurn);
 

@@ -24,11 +24,12 @@ import java.util.List;
 public class GitController {
 
     private Git git;
-    private static final String localPath = "/Users/matteo/IdeaProjects/bookkeeper";
+    private static String localPath = "";// = "/Users/matteo/IdeaProjects/bookkeeper";
 
     private static Repository repository;
 
-    public GitController () throws IOException {
+    public GitController (String projName) throws IOException {
+        this.localPath = "/Users/matteo/IdeaProjects/" + projName.toLowerCase();
         this.git = Git.open(new File(localPath));
         this.repository = git.getRepository();
     }
@@ -137,21 +138,10 @@ public class GitController {
             }
             i++;
         }
-
-        /* stampa
-        int numberRelease = 1;
-        for(List<FileJava> fileListRelease : fileJavaList){
-            System.out.println("Release number " + numberRelease
-                    + " -------------- size:  " + fileListRelease.size() + " ---------------------------------------------");
-            for(FileJava fileJava : fileListRelease){
-                System.out.println(fileJava.getFilename() + "    ---------------      " + fileJava.getRelease().getName());
-            }
-        numberRelease++;
-        }*/
     }
 
 
-    public static void setCommitList(List<List<RevCommit>> commitList, List<List<FileJava>> fileJavaList) throws IOException, GitAPIException {
+    public static void setCommitList(List<List<RevCommit>> commitList, List<List<FileJava>> fileJavaList) throws IOException {
 
 
         DiffFormatter formatter = new DiffFormatter(DisabledOutputStream.INSTANCE);
@@ -161,36 +151,35 @@ public class GitController {
 
         for(int i=0; i < commitList.size();i++) {
             for(RevCommit commit : commitList.get(i)){
-                if(commit!=commitList.get(0).get(0)){
+                if(commit!=commitList.get(0).get(0) && commit.getParentCount()>0){
                     ObjectId commitId = commit.getId();
-                        RevCommit parent = commit.getParent(0);
+                    RevCommit parent = commit.getParent(0);
+                    /*questo costrutto if-else serve per evitare che un commit che non ha genitori mi generi outofbound
+                    if(commit.getParentCount()!=0) {
+                        parent = commit.getParent(0);
+                    } else {
+                        parent = null;
+                    }
 
-                    if (parent != null) {
+                    if (parent != null) { */
 
-                        ObjectId parentID = parent.getId();
-                        List<DiffEntry> diffs = formatter.scan(parentID, commitId);
+                    ObjectId parentID = parent.getId();
+                    List<DiffEntry> diffs = formatter.scan(parentID, commitId);
 
+                    for (DiffEntry diff : diffs) {
+                        List<RevCommit> listTemp = new ArrayList<>();
+                        for (FileJava file : fileJavaList.get(i)) {
+                            if (diff.getNewPath().equals(file.getFilename())) {
 
-                        for (DiffEntry diff : diffs) {
-
-                            List<RevCommit> listTemp = new ArrayList<>();
-
-                            for (FileJava file : fileJavaList.get(i)) {
-
-                                if (diff.getNewPath().equals(file.getFilename())) {
-
-                                    listTemp = file.getListCommmit();
-
-                                    if (listTemp != null) {
-                                        listTemp.add(commit);
-                                        file.setListCommit(listTemp);
-                                    }
+                                listTemp = file.getListCommmit();
+                                if (listTemp != null) {
+                                    listTemp.add(commit);
+                                    file.setListCommit(listTemp);
                                 }
                             }
                         }
                     }
                 }
-
             }
         /*
             in questo metodo prendo in input la lista di commit e di fileJava,
@@ -206,23 +195,29 @@ public class GitController {
 
 
     //public static void main(String[] args) throws IOException, GitAPIException {
-    public List<List<FileJava>> loadGitInfo(List<Issue> bugsList) throws IOException, GitAPIException {
+    public List<List<FileJava>> loadGitInfo(List<Issue> bugsList, String projName, List<Release> halfReleaseList) throws IOException, GitAPIException {
 
-        new GitController();
+        new GitController(projName);
         List<RevCommit> commitList = retrieveAllCommits();
         JiraController jiraControl = new JiraController();
 
-        List<Release> releaseList = jiraControl.getReleases("BOOKKEEPER");
-        List<Release> halfReleaseList = jiraControl.halfReleases(releaseList);
+        List<Release> releaseList = jiraControl.getReleases(projName);
         //List<Release> halfReleaseList = releaseList; //per tutte le release
         List<List<RevCommit>> commitDividedForRelease = listOfCommitForRelease(commitList, halfReleaseList);
         commitListOrderer(commitDividedForRelease);
         List<List<FileJava>> listAllFiles = new ArrayList<>();
 
         for(List<RevCommit> listCommit : commitDividedForRelease) {
-            RevCommit lastCommit = listCommit.get(listCommit.size()-1);
-            List<FileJava> javaFile = getAllFiles(lastCommit);
-            listAllFiles.add(javaFile);
+            if(listCommit.size()!=0) {
+                RevCommit lastCommit = listCommit.get(listCommit.size() - 1);
+                List<FileJava> javaFile = getAllFiles(lastCommit);
+                listAllFiles.add(javaFile);
+
+            } else {
+                List<FileJava> javaFile = new ArrayList<>();
+                listAllFiles.add(javaFile);
+            }
+
         }
         //settiamo le release per ogni file
         setReleaseFile(listAllFiles,halfReleaseList);
@@ -230,7 +225,7 @@ public class GitController {
         //settiamo la lista di commit per ogni file
         setCommitList(commitDividedForRelease, listAllFiles);
 
-        MetricsController metricsControl = new MetricsController();
+        MetricsController metricsControl = new MetricsController(projName);
 
         //prendiamo ogni file e ne computiamo le metriche
         for(int i=0; i < listAllFiles.size(); i++) {
