@@ -6,13 +6,18 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import weka.core.Attribute;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.CSVLoader;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.AddValues;
+import weka.filters.unsupervised.attribute.Remove;
 
 
 public class CsvController {
@@ -74,9 +79,16 @@ public class CsvController {
         //if(projName.equals("ZOOKEEPER")) loader.setSource(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/ZOOKEEPER_training_" + countRelease + ".csv"));
         Instances data = loader.getDataSet();//get instances object
 
+        //rimuovo l'attributo filename
+        String[] options = new String[]{"-R", "2"};
+        Remove removeFilter = new Remove();
+        removeFilter.setOptions(options);
+        removeFilter.setInputFormat(data);
+        Instances newData = Filter.useFilter(data, removeFilter);
+
         // save ARFF
         ArffSaver saver = new ArffSaver();
-        saver.setInstances(data);//set the dataset we want to convert
+        saver.setInstances(newData);//set the dataset we want to convert
         //and save as ARFF
         saver.setFile(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/" + projName + "_" + training + "_" + countRelease + ".arff"));
         //if(projName.equals("ZOOKEEPER")) saver.setFile(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/ZOOKEEPER_training_" + countRelease + ".arff"));

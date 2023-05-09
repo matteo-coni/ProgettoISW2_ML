@@ -35,20 +35,22 @@ public class Main {
         proportionController.calculatorAvAfterProportion(bugsListFinal, releaseList);
 
         //stampa con av
-        /*for (Issue issues : bugsListFinal){
+        for (Issue issues : bugsListFinal){
             System.out.println("num: " + issues.getNum() + " key: " + issues.getKey() + " ov: " + issues.getOv().getName() + " fv: " +issues.getFv().getName() + " indice fv: " + issues.getFv().getId());
             if (issues.getIv()!=null) System.out.println("indice iv: " + issues.getIv().getId());
             for(Release rel: issues.getAv()) System.out.println("av: " + rel.getId());
-        }*/
+        }
 
         //next: retrive git java file and metrics
         GitController gitControl = new GitController(projName);
         List<List<FileJava>> fileJavaList = gitControl.loadGitInfo(bugsListFinal, projName, halfReleaseList); //qui ottengo una lista di file java (model.FileJava) con tutte le metriche calcolate
-        //gitControl.loadGitInfo();
 
         MetricsController metricsControl = new MetricsController(projName);
         List<FileJava> tempListFile = metricsControl.computeBuggynessProva(fileJavaList, bugsListFinal);
 
+        /*for(FileJava fileJava : fileJavaList.get(4)){
+            System.out.println("Nome: " + fileJava.getFilename() + " commit list: " + fileJava.getListCommmit());
+        }*/
 
         int countBuggy = 0;
         int countT = 0;
@@ -75,10 +77,12 @@ public class Main {
         WekaController wekaControl = new WekaController(projName);
         wekaControl.doWalkForward();
 
-        for(int i=0; i<fileJavaList.size(); i++) {
+        for(int i=1; i<fileJavaList.size(); i++) {
             csvControl.makeCsvTesting(fileJavaList.get(i), projName, i+1);
             csvControl.generateArff(projName, i+1, "testing");
         }
+
+        wekaControl.computeClassifier(fileJavaList.size(), projName);
 
         /*  strategia walk forward qui di seguito
             -

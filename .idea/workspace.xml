@@ -4,13 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="fix makeCsv, add method for converter csv to arff, add .csv and .arff file">
-      <change afterPath="$PROJECT_DIR$/src/main/java/control/WekaController.java" afterDir="false" />
+    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="Generated training and testing file .csv and .arff">
+      <change afterPath="$PROJECT_DIR$/src/main/java/model/ClassifierInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/CsvController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/CsvController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/control/GitController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/GitController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/control/MetricsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/MetricsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/control/WekaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/WekaController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -127,7 +126,7 @@
       <updated>1680595239176</updated>
       <workItem from="1680595240701" duration="268567000" />
       <workItem from="1683292285746" duration="7457000" />
-      <workItem from="1683617599759" duration="11962000" />
+      <workItem from="1683617599759" duration="27049000" />
     </task>
     <task id="LOCAL-00001" summary="Add getReleases and main">
       <created>1680622019931</created>
@@ -262,7 +261,14 @@
       <option name="project" value="LOCAL" />
       <updated>1683210334572</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Generated training and testing file .csv and .arff">
+      <created>1683637917055</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1683637917055</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -288,6 +294,7 @@
     <MESSAGE value="fix bug in compute buggyness" />
     <MESSAGE value="second fix bug in compute buggyness" />
     <MESSAGE value="fix makeCsv, add method for converter csv to arff, add .csv and .arff file" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix makeCsv, add method for converter csv to arff, add .csv and .arff file" />
+    <MESSAGE value="Generated training and testing file .csv and .arff" />
+    <option name="LAST_COMMIT_MESSAGE" value="Generated training and testing file .csv and .arff" />
   </component>
 </project>
