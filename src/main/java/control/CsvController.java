@@ -50,7 +50,7 @@ public class CsvController {
 
         }
 
-        String csvFilePath = "";
+        String csvFilePath;
 
         csvFilePath = projName + "_training_" + countRelease + ".csv";
 
@@ -75,7 +75,7 @@ public class CsvController {
         // load CSV
         CSVLoader loader = new CSVLoader();
         loader.setSource(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/" + projName + "_" + training + "_" + countRelease + ".csv"));
-        Instances data = loader.getDataSet();//get instances object
+        Instances data = loader.getDataSet();
 
         //rimuovo l'attributo filename
         String[] options = new String[]{"-R", "2"};
@@ -86,7 +86,8 @@ public class CsvController {
 
         // save ARFF
         ArffSaver saver = new ArffSaver();
-        saver.setInstances(newData);//set the dataset we want to convert
+        //set the dataset we want to convert
+        saver.setInstances(newData);
         //and save as ARFF
         saver.setFile(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/" + projName + "_" + training + "_" + countRelease + ".arff"));
         saver.writeBatch();
@@ -115,7 +116,7 @@ public class CsvController {
             listListString.add(temp);
         }
 
-        String csvFilePath = "";
+        String csvFilePath;
 
         csvFilePath = projName + "_testing_" + i + ".csv";
 
@@ -161,7 +162,7 @@ public class CsvController {
             }
         }
 
-        String csvFilePathReport = "";
+        String csvFilePathReport;
 
         csvFilePathReport = projName + "_Report_" + classifierList.get(0).get(0).getClassifier() + ".csv";
 

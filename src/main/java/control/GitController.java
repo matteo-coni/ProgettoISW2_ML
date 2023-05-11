@@ -1,33 +1,33 @@
 package control;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
 import model.FileJava;
-import model.Issue;
 import model.Release;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
-import org.eclipse.jgit.lib.*;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
 
-import java.util.List;
-
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Logger;
 
 
 public class GitController {
 
-    private static Git git;
+    private final Git git;
     private static String localPath;
+
+    private static final String PATH= "/Users/matteo/IdeaProjects/";
     private static Repository repository;
     public GitController (String projName) throws IOException {
-        localPath = "/Users/matteo/IdeaProjects/" + projName.toLowerCase();
+        localPath = PATH + projName.toLowerCase();
         git = Git.open(new File(localPath));
         repository = git.getRepository();
     }
@@ -43,12 +43,10 @@ public class GitController {
             //dopo aver filtrato, in una lista nuova (commitFinal) aggiungo solo quelli che nello short message contengono BOOKKEEPER-xxx
             for (RevCommit commit : commits) {
                     commitFinal.add(commit);
-
-
             }
 
         } catch (GitAPIException ignored) {
-
+            Logger.getLogger("CIAO");
         }
 
         return commitFinal;
