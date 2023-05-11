@@ -2,23 +2,19 @@ package control;
 
 import model.ClassifierInfo;
 import model.FileJava;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import weka.core.Instances;
+import weka.core.converters.ArffSaver;
+import weka.core.converters.CSVLoader;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import weka.core.Attribute;
-import weka.core.Instances;
-import weka.core.converters.ArffSaver;
-import weka.core.converters.CSVLoader;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.AddValues;
-import weka.filters.unsupervised.attribute.Remove;
 
 
 public class CsvController {
@@ -57,12 +53,9 @@ public class CsvController {
         String csvFilePath = "";
 
         csvFilePath = projName + "_training_" + countRelease + ".csv";
-        //if(projName.equals("ZOOKEEPER")) csvFilePath = "ZOOKEEPER_filejava_metrics_"  + countRelease + ".csv";
-
 
         String[] header = {"Release", "Filename", "LOC", "NR", "Authors", "Loc Touched", "Loc added", "LOC added",
                             "Avg LOC added", "Churn", "Max Churn", "Avg Churn", "Buggy"};
-
 
         FileWriter writer = new FileWriter(csvFilePath);
 
@@ -82,7 +75,6 @@ public class CsvController {
         // load CSV
         CSVLoader loader = new CSVLoader();
         loader.setSource(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/" + projName + "_" + training + "_" + countRelease + ".csv"));
-        //if(projName.equals("ZOOKEEPER")) loader.setSource(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/ZOOKEEPER_training_" + countRelease + ".csv"));
         Instances data = loader.getDataSet();//get instances object
 
         //rimuovo l'attributo filename
@@ -97,7 +89,6 @@ public class CsvController {
         saver.setInstances(newData);//set the dataset we want to convert
         //and save as ARFF
         saver.setFile(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/" + projName + "_" + training + "_" + countRelease + ".arff"));
-        //if(projName.equals("ZOOKEEPER")) saver.setFile(new File("/Users/matteo/IdeaProjects/ProgettoISW2_ML/ZOOKEEPER_training_" + countRelease + ".arff"));
         saver.writeBatch();
     }
 
@@ -121,19 +112,15 @@ public class CsvController {
             temp.add(String.valueOf(fileJava2.getMaxChurn()));
             temp.add(String.valueOf(fileJava2.getAvgChurn()));
             temp.add(String.valueOf(fileJava2.getBuggy()));
-            //listListString.add(temp);
             listListString.add(temp);
         }
 
         String csvFilePath = "";
 
         csvFilePath = projName + "_testing_" + i + ".csv";
-        //if(projName.equals("ZOOKEEPER")) csvFilePath = "ZOOKEEPER_filejava_metrics_"  + countRelease + ".csv";
-
 
         String[] header2 = {"Release", "Filename", "LOC", "NR", "Authors", "Loc Touched", "Loc added", "LOC added",
                 "Avg LOC added", "Churn", "Max Churn", "Avg Churn", "Buggy"};
-
 
         FileWriter writer = new FileWriter(csvFilePath);
 
@@ -177,11 +164,9 @@ public class CsvController {
         String csvFilePathReport = "";
 
         csvFilePathReport = projName + "_Report_" + classifierList.get(0).get(0).getClassifier() + ".csv";
-        //if(projName.equals("ZOOKEEPER")) csvFilePath = "ZOOKEEPER_filejava_metrics_"  + countRelease + ".csv";
 
         String[] header2 = {"Dataset", "#TrainingRelease", "%Training", "Classifier", "FeatureSel", "Sampling", "CostSensitive", "Precision",
                 "Recall", "AUC", "Kappa", "TN", "TP", "FN", "FP"};
-
 
         FileWriter writer = new FileWriter(csvFilePathReport);
         CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(header2));

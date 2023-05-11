@@ -1,4 +1,5 @@
-import control.*;
+package control;
+
 import model.FileJava;
 import model.Release;
 import model.Issue;
@@ -6,39 +7,37 @@ import model.Issue;
 import java.util.List;
 public class Main {
 
-    private final static String projName = "BOOKKEEPER";
+    private static final  String PROJNAME = "BOOKKEEPER";
     public static void main(String[] args) throws Exception {
 
         JiraController jiraControl = new JiraController();
         ProportionController proportionController = new ProportionController();
-        List<Release> releaseList = jiraControl.getReleases(projName); //ottengo tutte le release
-        List<Issue> bugsList = jiraControl.getIssues(projName,false); //ottengo tutti i bug (controllati)
+        List<Release> releaseList = jiraControl.getReleases(PROJNAME); //ottengo tutte le release
+        List<Issue> bugsList = jiraControl.getIssues(PROJNAME,false); //ottengo tutti i bug (controllati)
 
         List<Release> halfReleaseList = jiraControl.halfReleases(releaseList);
-        System.out.println("inizio metà release");
-        for (Release r : halfReleaseList){
-            System.out.println(r.getId() + " " + r.getName() + " " + r.getDate() );
-        }
 
-        //List<Issue> bugsListProportion = ProportionController.computeProportion(releaseList, bugsList);
         ProportionController.computeProportion(releaseList, bugsList);
         List<Issue> bugsListFinal = JiraController.cleanOvFv(bugsList);
 
         //ora calcoliamo le av dei bug le quali iv sono state calcolate con proportion
         proportionController.calculatorAvAfterProportion(bugsListFinal, releaseList);
 
-        //stampa con av
+        /*
+        stampa con av
         for (Issue issues : bugsListFinal){
             System.out.println("num: " + issues.getNum() + " key: " + issues.getKey() + " ov: " + issues.getOv().getName() + " fv: " +issues.getFv().getName() + " indice fv: " + issues.getFv().getId());
             if (issues.getIv()!=null) System.out.println("indice iv: " + issues.getIv().getId());
             for(Release rel: issues.getAv()) System.out.println("av: " + rel.getId());
         }
 
-        //next: retrive git java file and metrics
-        GitController gitControl = new GitController(projName);
-        List<List<FileJava>> fileJavaList = gitControl.loadGitInfo(bugsListFinal, projName, releaseList); //qui ottengo una lista di file java (model.FileJava) con tutte le metriche calcolate
+        next: retrive git java file and metrics
+        */
 
-        MetricsController metricsControl = new MetricsController(projName);
+        GitController gitControl = new GitController(PROJNAME);
+        List<List<FileJava>> fileJavaList = gitControl.loadGitInfo(PROJNAME, releaseList); //qui ottengo una lista di file java (model.FileJava) con tutte le metriche calcolate
+
+        MetricsController metricsControl = new MetricsController(PROJNAME);
         List<FileJava> tempListFile = metricsControl.computeBuggynessProva(fileJavaList, bugsListFinal);
 
 
@@ -57,21 +56,20 @@ public class Main {
         System.out.println("Numero file bug yes = " + countBuggy);
         System.out.println("Tot file = " + countT);
 
-        CsvController csvControl = new CsvController(projName);
+        CsvController csvControl = new CsvController(PROJNAME);
         //genero il file csv
-        csvControl.makeCsv(fileJavaList, projName, halfReleaseList.size());
-        //converto il csv in arff e genero il file arff
+        csvControl.makeCsv(fileJavaList, PROJNAME, halfReleaseList.size());
 
         //iniziamo con walk forward generando i training set
-        WekaController wekaControl = new WekaController(projName);
+        WekaController wekaControl = new WekaController(PROJNAME);
         wekaControl.doWalkForward();
 
         for(int i=1; i<=(fileJavaList.size()/2)-1; i++) {
-            csvControl.makeCsvTesting(fileJavaList.get(i), projName, i+1);
-            csvControl.generateArff(projName, i+1, "testing");
+            csvControl.makeCsvTesting(fileJavaList.get(i), PROJNAME, i+1);
+            csvControl.generateArff(PROJNAME, i+1, "testing");
         }
 
-        wekaControl.computeClassifier((fileJavaList.size()/2)-1, projName);
+        wekaControl.computeClassifier((fileJavaList.size()/2)-1, PROJNAME);
 
         /*  strategia walk forward qui di seguito
 

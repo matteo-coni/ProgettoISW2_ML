@@ -55,7 +55,7 @@ public class WekaController {
             List<Issue> bugsListFinal = JiraController.cleanOvFv(bugsList);
             proportionControl.calculatorAvAfterProportion(bugsListFinal, releaseList.subList(0, countRelease));
             GitController gitControl = new GitController(projName);
-            List<List<FileJava>> fileJavaList = gitControl.loadGitInfo(bugsListFinal, projName, halfReleaseList.subList(0,countRelease));
+            List<List<FileJava>> fileJavaList = gitControl.loadGitInfo(projName, halfReleaseList.subList(0,countRelease));
             MetricsController metricsControl = new MetricsController(projName);
             List<FileJava> tempListFile = metricsControl.computeBuggynessProva(fileJavaList, bugsListFinal);
 
