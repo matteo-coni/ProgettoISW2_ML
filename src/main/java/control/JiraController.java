@@ -92,7 +92,8 @@ public class JiraController {
         List<Release> halfReleaseList = releaseList; //in modo che
         //flag per il cold start, se coldStart è true, non devo dimezzare le release perchè sto calcolando cold start
         if (!coldStart) {
-            halfReleaseList = halfReleases(releaseList);
+            //halfReleaseList = halfReleases(releaseList);todo
+            halfReleaseList = releaseList;
         }
         List<Issue> listIssues = new ArrayList<>();
         List<Release> avList;

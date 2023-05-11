@@ -40,7 +40,6 @@ public class GitController {
           In questo metodo prendo tutti i commit
          */
 
-
         List<RevCommit> commitFinal = new ArrayList<>();
         Date dateCommit;
 

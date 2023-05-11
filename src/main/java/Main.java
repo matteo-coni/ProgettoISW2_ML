@@ -43,7 +43,7 @@ public class Main {
 
         //next: retrive git java file and metrics
         GitController gitControl = new GitController(projName);
-        List<List<FileJava>> fileJavaList = gitControl.loadGitInfo(bugsListFinal, projName, halfReleaseList); //qui ottengo una lista di file java (model.FileJava) con tutte le metriche calcolate
+        List<List<FileJava>> fileJavaList = gitControl.loadGitInfo(bugsListFinal, projName, releaseList); //qui ottengo una lista di file java (model.FileJava) con tutte le metriche calcolate
 
         MetricsController metricsControl = new MetricsController(projName);
         List<FileJava> tempListFile = metricsControl.computeBuggynessProva(fileJavaList, bugsListFinal);
@@ -73,16 +73,16 @@ public class Main {
         //converto il csv in arff e genero il file arff
         //csvControl.generateArff(projName, 0); //testing totale
 
-        //iniziamo con walk foward generando i training set
+        //iniziamo con walk forward generando i training set
         WekaController wekaControl = new WekaController(projName);
         wekaControl.doWalkForward();
 
-        for(int i=1; i<fileJavaList.size(); i++) {
+        for(int i=1; i<=(fileJavaList.size()/2)-1; i++) {
             csvControl.makeCsvTesting(fileJavaList.get(i), projName, i+1);
             csvControl.generateArff(projName, i+1, "testing");
         }
 
-        wekaControl.computeClassifier(fileJavaList.size(), projName);
+        wekaControl.computeClassifier((fileJavaList.size()/2)-1, projName);
 
         /*  strategia walk forward qui di seguito
             -
