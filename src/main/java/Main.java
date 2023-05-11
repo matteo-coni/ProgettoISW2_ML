@@ -2,25 +2,17 @@ import control.*;
 import model.FileJava;
 import model.Release;
 import model.Issue;
-import org.eclipse.jgit.api.errors.GitAPIException;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 public class Main {
 
-    private static String projName = "BOOKKEEPER";
+    private final static String projName = "BOOKKEEPER";
     public static void main(String[] args) throws Exception {
 
         JiraController jiraControl = new JiraController();
         ProportionController proportionController = new ProportionController();
         List<Release> releaseList = jiraControl.getReleases(projName); //ottengo tutte le release
         List<Issue> bugsList = jiraControl.getIssues(projName,false); //ottengo tutti i bug (controllati)
-        //System.out.println(bugsList.size());
-
-        /*for (Release r : releaseList){
-            System.out.println(r.getId() + " " + r.getName() + " " + r.getDate() );
-        }*/
 
         List<Release> halfReleaseList = jiraControl.halfReleases(releaseList);
         System.out.println("inizio metà release");
@@ -28,7 +20,8 @@ public class Main {
             System.out.println(r.getId() + " " + r.getName() + " " + r.getDate() );
         }
 
-        List<Issue> bugsListProportion = ProportionController.computeProportion(releaseList, bugsList);
+        //List<Issue> bugsListProportion = ProportionController.computeProportion(releaseList, bugsList);
+        ProportionController.computeProportion(releaseList, bugsList);
         List<Issue> bugsListFinal = JiraController.cleanOvFv(bugsList);
 
         //ora calcoliamo le av dei bug le quali iv sono state calcolate con proportion
@@ -48,9 +41,6 @@ public class Main {
         MetricsController metricsControl = new MetricsController(projName);
         List<FileJava> tempListFile = metricsControl.computeBuggynessProva(fileJavaList, bugsListFinal);
 
-        /*for(FileJava fileJava : fileJavaList.get(4)){
-            System.out.println("Nome: " + fileJava.getFilename() + " commit list: " + fileJava.getListCommmit());
-        }*/
 
         int countBuggy = 0;
         int countT = 0;
@@ -67,11 +57,10 @@ public class Main {
         System.out.println("Numero file bug yes = " + countBuggy);
         System.out.println("Tot file = " + countT);
 
-        CsvController csvControl = new CsvController();
+        CsvController csvControl = new CsvController(projName);
         //genero il file csv
         csvControl.makeCsv(fileJavaList, projName, halfReleaseList.size());
         //converto il csv in arff e genero il file arff
-        //csvControl.generateArff(projName, 0); //testing totale
 
         //iniziamo con walk forward generando i training set
         WekaController wekaControl = new WekaController(projName);
@@ -85,9 +74,7 @@ public class Main {
         wekaControl.computeClassifier((fileJavaList.size()/2)-1, projName);
 
         /*  strategia walk forward qui di seguito
-            -
-            -
-            -
+
             poi ricorda weka api: evalutian, instaces, datasource ecc
 
             se random forest mi da errore perché ho 0 classi bug, fai assunzioni, posso aggiungere una riga nuova finta (non molto buono)

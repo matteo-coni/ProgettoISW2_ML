@@ -16,7 +16,6 @@ import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
 
-import javax.sound.midi.SysexMessage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,8 +32,8 @@ public class MetricsController {
         repository = git.getRepository();
 
     }
-    public void computeMetrics(FileJava fileJava, List<List<FileJava>> fileJavaList, List<Issue> bugsList) throws IOException {
-
+    //public void computeMetrics(FileJava fileJava, List<List<FileJava>> fileJavaList, List<Issue> bugsList) throws IOException {
+    public void computeMetrics(FileJava fileJava, List<List<FileJava>> fileJavaList) throws IOException {
         //System.out.println("\n");
         int loc = setSizeLoc(fileJava);
         fileJava.setSizeLoc(loc); //setta l'attributo
@@ -53,18 +52,6 @@ public class MetricsController {
         //calcoliamo e settiamo number of revision
         int numberRevision = fileJava.getListCommmit().size();
         fileJava.setNr(numberRevision);
-
-        //computeBuggynessProva(fileJava, bugsList);
-
-        /*System.out.println("release " + fileJava.getRelease().getName() + " file: " + fileJava.getFilename() + " LOC: " + fileJava.getSizeLoc()
-                + " nr authors: " + fileJava.getNumberAuthors() + " LOC TOUCHED: " + fileJava.getTouchedLoc() + " NR: " + fileJava.getNr() + " LOC ADDED: " + fileJava.getAddedLoc()
-                + " MAX LOC ADD: " + fileJava.getMaxLocAdded() + " AVG ADD: " + fileJava.getAvgLocAdded() + " Churn: " + fileJava.getChurn() + " MAX CHURN: " + fileJava.getMaxChurn()
-                + " AVG churn: " + fileJava.getAvgChurn() + " Buggy: " + fileJava.getBuggy());
-        */
-
-        /*for(RevCommit commit : fileJava.getListCommmit()) {
-            System.out.println(commit.getShortMessage());
-        }*/
     }
 
     public static int setSizeLoc(FileJava fileJava) throws IOException {
@@ -121,7 +108,7 @@ public class MetricsController {
 
     public static int computeNumberAuthors(FileJava fileJava){
 
-        int numberAuthors = 0;
+        int numberAuthors;
         List<String> authors = new ArrayList<>();
         for(RevCommit commit : fileJava.getListCommmit()){
             String name = commit.getAuthorIdent().getName();

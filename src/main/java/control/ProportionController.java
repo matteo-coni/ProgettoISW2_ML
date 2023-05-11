@@ -36,13 +36,13 @@ public class ProportionController {
          */
 
         //increment
-        float p = 0;
-        float p_tot = 0;
-        float pColdStart = 0;
+        float p;
+        float p_tot;
+        float pColdStart;
         int ivId;
         int ovId;
         int fvId;
-        int count = 0;
+        int count;
         for (Issue bug : bugsList) {
             if (bug.getIv() == null) {
                 bugsListToDo.add(bug);
@@ -82,7 +82,7 @@ public class ProportionController {
                    }
                }
            }
-           p_tot = (float)(p_tot/count);
+           p_tot = p_tot/count;
 
            /*
              faccio cold start se il numero dei ticket utilizzati per il calcolo
@@ -91,7 +91,6 @@ public class ProportionController {
            if(count < THREESHOLDCOLDSTART) {
                calculatorIV(bugsToDo,pColdStart, releaseList);
            } else {
-               //System.out.println("bug: " + bugsToDo.getKey() + " p: " + p_tot); //prova stampa p
                calculatorIV(bugsToDo, p_tot, releaseList);
 
            }
@@ -108,7 +107,7 @@ public class ProportionController {
         int ovIdB = bugsToDo.getOv().getId();
         int fvIdB = bugsToDo.getFv().getId();
         if (fvIdB==ovIdB) {
-            ivIdB = (fvIdB - (float) (1) * p); // qui metto 1 per ovviare al problema di fv==ov, ma resta il problema di quando fv e ov sono uguali ad 1 e viene 1
+            ivIdB = (fvIdB - p); // qui metto 1 per ovviare al problema di fv==ov, ma resta il problema di quando fv e ov sono uguali ad 1 e viene 1
         } else {
             ivIdB = fvIdB - (fvIdB - ovIdB) * p; //iv = fv-(fv-ov)*p
         }
@@ -172,9 +171,9 @@ public class ProportionController {
 
     }
     public static float pCalc(int ivId, int ovId, int fvId){
-        float p = (float)(fvId - ivId) / (fvId - ovId);
 
-        return p;
+        return (float)(fvId - ivId) / (fvId - ovId);
+
     }
 
     public void calculatorAvAfterProportion(List<Issue> bugsList, List<Release> releaseList){
@@ -193,7 +192,7 @@ public class ProportionController {
                 for(i=idIv; i<=lastId; i++){
 
                     for (Release rel : releaseList){
-                        Release relAv = null;
+                        Release relAv;//  = null;
                         if (rel.getId()==i){
                             relAv = rel;
                             listAv.add(relAv);
@@ -204,15 +203,7 @@ public class ProportionController {
 
             //}
         }
-        //prova per buggyness
-        /*for(Issue bug2 : bugsList){
-            List<Release> listAv2 = new ArrayList<>();
-            if(bug2.getOv().equals(bug2.getFv())){
-                listAv2 = bug2.getAv();
-                listAv2.add(bug2.getFv());
-                bug2.setAv(listAv2);
-            }
-        }*/
+
 
     }
 }

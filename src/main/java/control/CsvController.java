@@ -1,5 +1,6 @@
 package control;
 
+import model.ClassifierInfo;
 import model.FileJava;
 
 import java.io.File;
@@ -21,6 +22,11 @@ import weka.filters.unsupervised.attribute.Remove;
 
 
 public class CsvController {
+
+    private final String projName;
+    public CsvController(String projName){
+        this.projName = projName;
+    }
 
     public void makeCsv(List<List<FileJava>> fileJavaList, String projName, int countRelease) throws IOException {
 
@@ -131,6 +137,53 @@ public class CsvController {
 
         FileWriter writer = new FileWriter(csvFilePath);
 
+        CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(header2));
+
+        for (List<String> row : listListString) {
+            printer.printRecord(row);
+        }
+
+        // Chiudi il printer e il writer
+        printer.close();
+        writer.close();
+    }
+
+    public void makeCsvForReport(List<List<ClassifierInfo>> classifierList) throws IOException {
+
+        List<List<String>> listListString = new ArrayList<>();
+
+        for (List<ClassifierInfo> listClass : classifierList) {
+            for (ClassifierInfo classInfo : listClass){
+                List<String> temp = new ArrayList<>();
+                temp.add(classInfo.getProjName());
+                temp.add(String.valueOf(classInfo.getWalkForwardIterationIndex()));
+                temp.add(String.valueOf(classInfo.getTrainingPercent()));
+                temp.add(String.valueOf(classInfo.getClassifier()));
+                temp.add(String.valueOf(classInfo.isFeatureSelection()));
+                temp.add(String.valueOf(classInfo.isSampling()));
+                temp.add(String.valueOf(classInfo.isCostSensitive()));
+                temp.add(String.valueOf(classInfo.getPrecision()));
+                temp.add(String.valueOf(classInfo.getRecall()));
+                temp.add(String.valueOf(classInfo.getAuc()));
+                temp.add(String.valueOf(classInfo.getKappa()));
+                temp.add(String.valueOf(classInfo.getTn()));
+                temp.add(String.valueOf(classInfo.getTp()));
+                temp.add(String.valueOf(classInfo.getFn()));
+                temp.add(String.valueOf(classInfo.getFp()));
+                listListString.add(temp);
+            }
+        }
+
+        String csvFilePathReport = "";
+
+        csvFilePathReport = projName + "_Report_" + classifierList.get(0).get(0).getClassifier() + ".csv";
+        //if(projName.equals("ZOOKEEPER")) csvFilePath = "ZOOKEEPER_filejava_metrics_"  + countRelease + ".csv";
+
+        String[] header2 = {"Dataset", "#TrainingRelease", "%Training", "Classifier", "FeatureSel", "Sampling", "CostSensitive", "Precision",
+                "Recall", "AUC", "Kappa", "TN", "TP", "FN", "FP"};
+
+
+        FileWriter writer = new FileWriter(csvFilePathReport);
         CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(header2));
 
         for (List<String> row : listListString) {

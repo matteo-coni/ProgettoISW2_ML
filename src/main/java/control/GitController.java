@@ -23,7 +23,7 @@ import java.util.List;
 
 public class GitController {
 
-    private Git git;
+    private final Git git;
     private static String localPath = "";// = "/Users/matteo/IdeaProjects/bookkeeper";
 
     private static Repository repository;
@@ -230,7 +230,7 @@ public class GitController {
         for(int i=0; i < listAllFiles.size(); i++) {
             for (int j = 0; j < (listAllFiles.get(i).size()); j++) {
 
-                metricsControl.computeMetrics(listAllFiles.get(i).get(j), listAllFiles, bugsList);
+                metricsControl.computeMetrics(listAllFiles.get(i).get(j), listAllFiles);//, bugsList);
             }
         }
 

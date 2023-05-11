@@ -4,31 +4,20 @@ import model.ClassifierInfo;
 import model.FileJava;
 import model.Issue;
 import model.Release;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.lib.Repository;
-
 import weka.attributeSelection.BestFirst;
 import weka.attributeSelection.CfsSubsetEval;
-import weka.attributeSelection.GreedyStepwise;
 import weka.classifiers.CostMatrix;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.meta.CostSensitiveClassifier;
-import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
-import weka.core.UnsupportedAttributeTypeException;
-import weka.core.converters.ConverterUtils;
 import weka.core.converters.ConverterUtils.DataSource;
-import weka.core.Instance;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.AttributeSelection;
 import weka.filters.supervised.instance.SMOTE;
-import weka.filters.supervised.attribute.AttributeSelection;
 
-
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,15 +27,14 @@ public class WekaController {
     private static final String RANDOM_FOREST = "Random Forest";
     private static final String NAIVE_BAYES = "Naive Bayes";
     private static final String IBK = "IBk";
-    private Git git;
-    private String localPath = "";
-    private Repository repository;
+    //private Git git;
+    //private String localPath = "";
 
-    private String projName;
+    private final String projName;
     public WekaController(String projName) throws IOException {
-        this.localPath = "/Users/matteo/IdeaProjects/" + projName.toLowerCase();
-        this.git = Git.open(new File(localPath));
-        this.repository = git.getRepository();
+        //this.localPath = "/Users/matteo/IdeaProjects/" + projName.toLowerCase();
+        //this.git = Git.open(new File(localPath));
+        //this.repository = git.getRepository();
         this.projName = projName;
     }
 
@@ -80,7 +68,7 @@ public class WekaController {
                 }
             }
 
-            CsvController csvControl = new CsvController();
+            CsvController csvControl = new CsvController(projName);
             //genero il file csv
             csvControl.makeCsv(fileJavaList, projName, countRelease);
             //converto il csv in arff e genero il file arff
@@ -151,11 +139,13 @@ public class WekaController {
                 ClassifierInfo simpleRandomForest = new ClassifierInfo(this.projName, count, RANDOM_FOREST, false, false, false);
                 setSimpleClassifier(simpleRandomForest, eval, training, testing, randomForestList);
 
+                eval = new Evaluation(testing);
                 naiveBayesClassifier.buildClassifier(training);
                 eval.evaluateModel(naiveBayesClassifier, testing);
                 ClassifierInfo simpleNaiveBayes = new ClassifierInfo(this.projName, count, NAIVE_BAYES, false, false, false);
                 setSimpleClassifier(simpleNaiveBayes, eval, training, testing, naiveBayesList);
 
+                eval = new Evaluation(testing);
                 ibkClassifier.buildClassifier(training);
                 eval.evaluateModel(ibkClassifier, testing);
                 ClassifierInfo simpleIBk = new ClassifierInfo(this.projName, count, IBK, false, false, false);
@@ -176,16 +166,19 @@ public class WekaController {
                 int numAttrFiltered = filteredTraining.numAttributes();
                 filteredTraining.setClassIndex(numAttrFiltered - 1);
 
+                eval = new Evaluation(testing);
                 randomForestClassifier.buildClassifier(filteredTraining);
                 eval.evaluateModel(randomForestClassifier, filteredTesting);
                 ClassifierInfo featureRandomForest = new ClassifierInfo(this.projName, count, RANDOM_FOREST, true, false, false);
                 setSimpleClassifier(featureRandomForest, eval, filteredTraining, filteredTesting, featureRandomForestList);
 
+                eval = new Evaluation(testing);
                 naiveBayesClassifier.buildClassifier(filteredTraining);
                 eval.evaluateModel(naiveBayesClassifier, filteredTesting);
                 ClassifierInfo featureNaiveBayes = new ClassifierInfo(this.projName, count, NAIVE_BAYES, true, false, false);
                 setSimpleClassifier(featureNaiveBayes, eval, filteredTraining, filteredTesting, featureNaiveBayesList);
 
+                eval = new Evaluation(testing);
                 ibkClassifier.buildClassifier(filteredTraining);
                 eval.evaluateModel(naiveBayesClassifier, filteredTesting);
                 ClassifierInfo featureIbk = new ClassifierInfo(this.projName, count, IBK, true, false, false);
@@ -197,44 +190,63 @@ public class WekaController {
                 smoteFilter.setInputFormat(training);
                 Instances oversampledData = Filter.useFilter(training, smoteFilter); //faccio solo il training perché sto facendo OVER
 
+                eval = new Evaluation(testing);
                 randomForestClassifier.buildClassifier(oversampledData);
                 eval.evaluateModel(randomForestClassifier, testing);
                 ClassifierInfo overSamplingRandomForest = new ClassifierInfo(this.projName, count, RANDOM_FOREST, false, true, false);
                 setSimpleClassifier(overSamplingRandomForest, eval, oversampledData, testing, samplingRandomForestList);
 
+                eval = new Evaluation(testing);
                 naiveBayesClassifier.buildClassifier(oversampledData);
                 eval.evaluateModel(naiveBayesClassifier, testing);
                 ClassifierInfo overSamplingNaiveBayes = new ClassifierInfo(this.projName, count, NAIVE_BAYES, false, true, false);
                 setSimpleClassifier(overSamplingNaiveBayes, eval, oversampledData, testing, samplingNaiveBayesList);
 
+                eval = new Evaluation(testing);
                 ibkClassifier.buildClassifier(oversampledData);
                 eval.evaluateModel(ibkClassifier, testing);
                 ClassifierInfo overSamplingIbk = new ClassifierInfo(this.projName, count, IBK, false, true, false);
                 setSimpleClassifier(overSamplingIbk, eval, oversampledData, testing, samplingIbkList);
 
-                //---- inizio feature selection and OVERSAMPLING
+                /*---- inizio feature selection and OVERSAMPLING
                 SMOTE smoteFilterSel = new SMOTE();
                 smoteFilterSel.setOptions(new String[] {"-M", "1.0"});
                 smoteFilterSel.setInputFormat(filteredTraining);
-                Instances oversampledDataSel = Filter.useFilter(filteredTraining, smoteFilterSel);
-                //random forest
-                randomForestClassifier.buildClassifier(oversampledDataSel);
-                eval.evaluateModel(randomForestClassifier, filteredTesting);
-                ClassifierInfo overSamplingRandomForestSel = new ClassifierInfo(this.projName, count, RANDOM_FOREST, true, true, false);
-                setSimpleClassifier(overSamplingRandomForestSel, eval, oversampledDataSel, filteredTesting, samplingRandomForestListSel);
-                //naive bayes
-                naiveBayesClassifier.buildClassifier(oversampledDataSel);
-                eval.evaluateModel(naiveBayesClassifier, filteredTesting);
-                ClassifierInfo overSamplingNaiveBayesSel = new ClassifierInfo(this.projName, count, NAIVE_BAYES, true, true, false);
-                setSimpleClassifier(overSamplingNaiveBayesSel, eval, oversampledDataSel, filteredTesting, samplingNaiveBayesListSel);
-                //ibk
-                ibkClassifier.buildClassifier(oversampledDataSel);
-                eval.evaluateModel(ibkClassifier, filteredTesting);
-                ClassifierInfo overSamplingIbkSel = new ClassifierInfo(this.projName, count, IBK, true, true, false);
-                setSimpleClassifier(overSamplingIbkSel, eval, oversampledDataSel, filteredTesting, samplingIbkListSel);
+                Instances oversampledDataSel = Filter.useFilter(filteredTraining, smoteFilterSel);*/
 
-                //inizio cost sensitive
-                /*
+                if (filteredTraining.numInstances() > 0 && filteredTesting.numInstances() > 0) {
+
+                    SMOTE smoteFilterSel = new SMOTE();
+                    smoteFilterSel.setOptions(new String[]{"-M", "1.0"});
+                    smoteFilterSel.setInputFormat(filteredTraining);
+                    Instances oversampledDataSel = Filter.useFilter(filteredTraining, smoteFilterSel);
+
+
+                    //random forest
+                    eval = new Evaluation(testing);
+                    randomForestClassifier.buildClassifier(oversampledDataSel);
+                    eval.evaluateModel(randomForestClassifier, filteredTesting);
+                    ClassifierInfo overSamplingRandomForestSel = new ClassifierInfo(this.projName, count, RANDOM_FOREST, true, true, false);
+                    setSimpleClassifier(overSamplingRandomForestSel, eval, oversampledDataSel, filteredTesting, samplingRandomForestListSel);
+
+                    //naive bayes
+                    eval = new Evaluation(testing);
+                    naiveBayesClassifier.buildClassifier(oversampledDataSel);
+                    eval.evaluateModel(naiveBayesClassifier, filteredTesting);
+                    ClassifierInfo overSamplingNaiveBayesSel = new ClassifierInfo(this.projName, count, NAIVE_BAYES, true, true, false);
+                    setSimpleClassifier(overSamplingNaiveBayesSel, eval, oversampledDataSel, filteredTesting, samplingNaiveBayesListSel);
+                    //ibk
+                    eval = new Evaluation(testing);
+                    ibkClassifier.buildClassifier(oversampledDataSel);
+                    eval.evaluateModel(ibkClassifier, filteredTesting);
+                    ClassifierInfo overSamplingIbkSel = new ClassifierInfo(this.projName, count, IBK, true, true, false);
+                    setSimpleClassifier(overSamplingIbkSel, eval, oversampledDataSel, filteredTesting, samplingIbkListSel);
+
+                } else {
+                    System.out.println("error");
+                }
+
+                /* Inizio cost sensitive
                 La cella (0,0) rappresenta il costo di classificare correttamente un'istanza negativa,
                     che in questo caso è impostato a 0.
                 La cella (1,0) rappresenta il costo di classificare erroneamente un'istanza negativa come positiva,
@@ -251,6 +263,8 @@ public class WekaController {
                 costMatrix.setCell(0,1,1.0);
                 costMatrix.setCell(1,1,0.0);
 
+                eval = new Evaluation(testing);
+
                 CostSensitiveClassifier costSensitiveClassifier = new CostSensitiveClassifier();
                 //random forest cost sens
                 costSensitiveClassifier.setClassifier(randomForestClassifier);
@@ -261,6 +275,7 @@ public class WekaController {
                 setSimpleClassifier(costSensRandomForest, eval, training, testing, costSensRandomForestList);
 
                 //naive Bayes cost sens
+                eval = new Evaluation(testing);
                 costSensitiveClassifier.setClassifier(naiveBayesClassifier);
                 costSensitiveClassifier.setCostMatrix(costMatrix);
                 costSensitiveClassifier.buildClassifier(training);
@@ -269,6 +284,7 @@ public class WekaController {
                 setSimpleClassifier(costSensNaiveBayes, eval, training, testing, costSensNaiveBayesList);
 
                 //ibk cost sens
+                eval = new Evaluation(testing);
                 costSensitiveClassifier.setClassifier(ibkClassifier);
                 costSensitiveClassifier.setCostMatrix(costMatrix);
                 costSensitiveClassifier.buildClassifier(training);
@@ -276,19 +292,41 @@ public class WekaController {
                 ClassifierInfo costSensIbk = new ClassifierInfo(this.projName, count, IBK, false, false, true);
                 setSimpleClassifier(costSensIbk, eval, training, testing, costSensIbkList);
 
-
-
-
-
-
-
-
             } catch (Exception e){
                 System.out.println("Exception: " + e.getMessage());
             }
 
+        } //fine for
 
-        }
+        List<List<ClassifierInfo>> allRandomForest = new ArrayList<>();
+        allRandomForest.add(randomForestList);
+        allRandomForest.add(featureRandomForestList);
+        allRandomForest.add(samplingRandomForestList);
+        allRandomForest.add(samplingRandomForestListSel);
+        allRandomForest.add(costSensRandomForestList);
+
+        List<List<ClassifierInfo>> allNaiveBayes = new ArrayList<>();
+        allNaiveBayes.add(naiveBayesList);
+        allNaiveBayes.add(featureNaiveBayesList);
+        allNaiveBayes.add(samplingNaiveBayesList);
+        allNaiveBayes.add(samplingNaiveBayesListSel);
+        allNaiveBayes.add(costSensNaiveBayesList);
+
+        List<List<ClassifierInfo>> allIbk = new ArrayList<>();
+        allIbk.add(ibkList);
+        allIbk.add(featureIbkList);
+        allIbk.add(samplingIbkList);
+        allIbk.add(samplingIbkListSel);
+        allIbk.add(costSensIbkList);
+
+
+        CsvController csvControl = new CsvController(projName);
+        csvControl.makeCsvForReport(allRandomForest);
+        csvControl.makeCsvForReport(allNaiveBayes);
+        csvControl.makeCsvForReport(allIbk);
+
+
+
 
         System.out.println("Random forest: ");
         for(int i=0;i<randomForestList.size();i++){
@@ -384,6 +422,7 @@ public class WekaController {
     public void setSimpleClassifier(ClassifierInfo classifier, Evaluation eval, Instances training, Instances testing, List<ClassifierInfo> listClassifier ){
 
         classifier.setTrainingPercent(100.0 * training.numInstances() / (training.numInstances() + testing.numInstances()));
+        System.out.println(training.numInstances() + "// " + testing.numInstances());
         classifier.setPrecision(eval.precision(0));
         classifier.setRecall(eval.recall(0));
         classifier.setAuc(eval.areaUnderROC(0));
