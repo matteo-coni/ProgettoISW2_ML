@@ -84,21 +84,14 @@ public class JiraController {
         return releaseList;
     }
 
-    public List<Issue> getIssues (String projName, Boolean coldStart) throws IOException {
+    public List<Issue> getIssues (String projName) throws IOException {
 
         List<Release> releaseList = getReleases(projName);
-        List<Release> halfReleaseList = releaseList; //in modo che
-        //flag per il cold start, se coldStart è true, non devo dimezzare le release perché sto calcolando cold start
-        if (!coldStart) {
-            //halfReleaseList = halfReleases(releaseList);todo
-            halfReleaseList = releaseList;
-        }
         List<Issue> listIssues = new ArrayList<>();
         List<Release> avList;
         JSONArray avJSONArray;
         Release ov;
         Release fv;
-        Release iv;
         Date resolutionDate;
         Date openingDate;
 
@@ -124,8 +117,6 @@ public class JiraController {
 
                 JSONObject currentObjectJson = issuesArray.getJSONObject(i%1000);
                 String key = currentObjectJson.get("key").toString();
-                String versionJson = currentObjectJson.getJSONObject(FIELD).get("versions").toString();
-                String fixVersionsJson = currentObjectJson.getJSONObject(FIELD).get("fixVersions").toString();
                 String stringResolutionDate = currentObjectJson.getJSONObject(FIELD).getString("resolutiondate");
                 String creationDate = currentObjectJson.getJSONObject(FIELD).get("created").toString();
 
@@ -136,16 +127,13 @@ public class JiraController {
                 openingDate = Date.valueOf(creationDate);
 
                 //creo due oggetti fv e ov da inserire poi nella creazione dell'oggetto issue
-                fv = getFixedOpeningVersions(halfReleaseList, resolutionDate);
-                ov = getFixedOpeningVersions(halfReleaseList, openingDate);
+                fv = getFixedOpeningVersions(releaseList, resolutionDate);
+                ov = getFixedOpeningVersions(releaseList, openingDate);
 
 
                 //array dell'oggetto i-esimo, prendendo il campo fields e successivamente le affected versions
                 avJSONArray = issuesArray.getJSONObject(i%1000).getJSONObject(FIELD).getJSONArray("versions");
-                //System.out.println(i+1);
-                List<Release> affectedVersions = getAffectedVersions(avJSONArray, halfReleaseList);
-                avList = affectedVersions;
-                //System.out.println(avList);
+                avList = getAffectedVersions(avJSONArray, releaseList);
 
                 Issue addIssue = createIssue(key, ov, fv, avList, total-i);
                 if (!verifyIssue(addIssue)) listIssues.add(addIssue);
@@ -177,13 +165,7 @@ public class JiraController {
         }
         //con questo diventano 368
         // iv!=null e iv > ov
-        if (issue.getIv()!=null && (issue.getOv().getDate().compareTo(issue.getIv().getDate())<0)){
-            return true;
-        }
-
-
-
-        return false;
+        return issue.getIv() != null && (issue.getOv().getDate().compareTo(issue.getIv().getDate()) < 0);
     }
     public Issue createIssue(String key, Release ov, Release fv, List<Release> avList, int i){
         Issue newIssue = null;
@@ -237,7 +219,7 @@ public class JiraController {
                 int releaseId = getReleaseIdByName(affVersArray.getJSONObject(k).getString("name"), releaseList);
 
                 if (releaseDate!=null) { //qui skip le av senza le releasedate
-                    releaseAv = new Release(releaseId, affVersArray.getJSONObject(k).getString("name"), releaseDate);//Date.valueOf(affVersArray.getJSONObject(k).getString("releaseDate")));
+                    releaseAv = new Release(releaseId, affVersArray.getJSONObject(k).getString("name"), releaseDate);
 
                     avList.add(releaseAv);
                 }
@@ -267,7 +249,6 @@ public class JiraController {
         return id;
     }
     public List<Release> halfReleases (List<Release> allReleaseList){
-        //List<Release> listHalfRelease = new ArrayList<>();
 
         int halfSize = allReleaseList.size() / 2;
 
@@ -279,7 +260,6 @@ public class JiraController {
         List<Issue> listBugFinal = new ArrayList<>();
         for(Issue bug : bugsList){
             if(bug.getOv().getId() == 1 && (bug.getFv().getId() == 1)){
-                continue;
             } else {
                 listBugFinal.add(bug);
             }

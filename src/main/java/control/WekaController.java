@@ -43,7 +43,7 @@ public class WekaController {
         JiraController jiraControl = new JiraController();
 
         List<Release> releaseList = jiraControl.getReleases(projName);
-        List<Issue> bugsList = jiraControl.getIssues(projName,false);
+        List<Issue> bugsList = jiraControl.getIssues(projName);
         List<Release> halfReleaseList = jiraControl.halfReleases(releaseList);
 
         //qui applico walk forward richiamando

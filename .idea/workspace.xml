@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="fix code smell #2">
+    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="fix code smell #3">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/control/GitController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/GitController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/JiraController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/JiraController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/control/MetricsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/MetricsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/control/ProportionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/ProportionController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/WekaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/WekaController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -131,7 +132,7 @@
       <updated>1680595239176</updated>
       <workItem from="1680595240701" duration="268567000" />
       <workItem from="1683292285746" duration="7457000" />
-      <workItem from="1683617599759" duration="68089000" />
+      <workItem from="1683617599759" duration="71375000" />
     </task>
     <task id="LOCAL-00001" summary="Add getReleases and main">
       <created>1680622019931</created>
@@ -308,14 +309,20 @@
       <option name="project" value="LOCAL" />
       <updated>1683818457537</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="fix code smell #3">
+      <created>1683986726889</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1683986726889</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add getReleases and main" />
     <MESSAGE value="Aggiunti metodi per ricavare fv e ov" />
     <MESSAGE value="Aggiunti metodi per creare la lista di bugs" />
     <MESSAGE value="Aggiunto metodo per implementare (todo) proportion" />
@@ -340,6 +347,7 @@
     <MESSAGE value="generated csv report for classifiers" />
     <MESSAGE value="fix code smell #1" />
     <MESSAGE value="fix code smell #2" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix code smell #2" />
+    <MESSAGE value="fix code smell #3" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix code smell #3" />
   </component>
 </project>

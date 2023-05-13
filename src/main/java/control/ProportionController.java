@@ -69,17 +69,17 @@ public class ProportionController {
                  In altre parole, un bug, per poter essere utilizzato nel calcolo di p,
                  deve essere chiuso prima dell'apertura del ticket del bug considerato
                */
-               if (bug.getFv().getId() < bugsToDo.getOv().getId()){
+               if ((bug.getFv().getId() < bugsToDo.getOv().getId()) && bug.getFv().getId()!=bug.getOv().getId()){
                    ivId = bug.getIv().getId();
                    ovId = bug.getOv().getId();
                    fvId = bug.getFv().getId();
 
                    //per evitare lo zero al denominatore
-                   if (fvId != ovId) {
+
                        p = pCalc(ivId, ovId, fvId);
                        count++;
                        p_tot = p_tot + p;
-                   }
+
                }
            }
            p_tot = p_tot/count;
@@ -141,7 +141,7 @@ public class ProportionController {
         for(String projName : listProjName) {
             //ora prendo i bug
             JiraController jiraControl = new JiraController();
-            listIssueColdStart = jiraControl.getIssues(projName, true);
+            listIssueColdStart = jiraControl.getIssues(projName);
             count = 0;
             p_proj = 0;
             for(Issue bug : listIssueColdStart){

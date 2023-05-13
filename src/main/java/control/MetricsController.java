@@ -4,10 +4,7 @@ import model.FileJava;
 import model.Issue;
 import model.Release;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.diff.DiffFormatter;
-import org.eclipse.jgit.diff.Edit;
-import org.eclipse.jgit.diff.RawTextComparator;
+import org.eclipse.jgit.diff.*;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.Repository;
@@ -25,16 +22,18 @@ import java.util.List;
 
 public class MetricsController {
 
-    private static Repository repository;
+    Repository repository;
+
     public MetricsController(String projName) throws IOException {
         String localPath = "/Users/matteo/IdeaProjects/" + projName.toLowerCase();
         Git git = Git.open(new File(localPath));
         repository = git.getRepository();
 
     }
-    //public void computeMetrics(FileJava fileJava, List<List<FileJava>> fileJavaList, List<Issue> bugsList) throws IOException {
+
+
     public void computeMetrics(FileJava fileJava, List<List<FileJava>> fileJavaList) throws IOException {
-        //System.out.println("\n");
+
         int loc = setSizeLoc(fileJava);
         fileJava.setSizeLoc(loc); //setta l'attributo
         //se non ci sono commit che toccano un file, esso avrà loc=0, quindi per risolvere prendo le loc del file nella versione precedente
@@ -54,7 +53,7 @@ public class MetricsController {
         fileJava.setNr(numberRevision);
     }
 
-    public static int setSizeLoc(FileJava fileJava) throws IOException {
+    public int setSizeLoc(FileJava fileJava) throws IOException {
 
 
         if((fileJava.getListCommmit().size()-1)<0){
@@ -64,7 +63,7 @@ public class MetricsController {
         String filePath = fileJava.getFilename();
 
         RevTree commitTree = lastCommit.getTree();
-        try (TreeWalk treeWalk = TreeWalk.forPath(repository, filePath, commitTree)) {
+        TreeWalk treeWalk = TreeWalk.forPath(repository, filePath, commitTree);
             ObjectId blobId = treeWalk.getObjectId(0);
             ObjectLoader loader = repository.open(blobId);
 
@@ -73,22 +72,20 @@ public class MetricsController {
             loader.copyTo(out);
 
             // Calcola le linee di codice
-            String fileContent = new String(out.toByteArray());
             int linesOfCode = 0;
             try (ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
                  BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-                String read; //for sonar
-                while ((read = reader.readLine()) != null) {
-                    //togli il commento sottostante per aggiungere i filtri nel conteggio LOC
-                    //if (!line.trim().startsWith("//") && !line.trim().startsWith("/*") && !line.trim().startsWith("*") && !line.trim().isEmpty()) {
+
+                while ((reader.readLine()) != null) {
+                    //cosi è senza filtri per il loc (es // ecc)
                     linesOfCode++;
-                    //}
+
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            //} catch (IOException e) {
+                //throw new RuntimeException(e);
             }
             return linesOfCode;
-        }
+
     }
 
     public static void computeLocWhen0(FileJava fileJava, List<List<FileJava>> fileJavaList){
@@ -121,7 +118,7 @@ public class MetricsController {
         return numberAuthors;
     }
 
-    public static int computeLocTouched(FileJava fileJava) throws IOException {
+    public int computeLocTouched(FileJava fileJava) throws IOException {
 
         //oltre a calcolare le loc touched, setto anche direttamente le loc added
         int locTouched = 0;
@@ -146,11 +143,9 @@ public class MetricsController {
                         int linesDel = 0;
                         int linesAdd = 0;
 
-                        for (Edit edit : formatter.toFileHeader(diff).toEditList()) { //per ridurre complessita fai due metodi per calcolare linesDel e linesAdd
-                            linesDel += edit.getEndA() - edit.getBeginA();
-                            linesAdd += edit.getEndB() - edit.getBeginB();
-                            //churn += Math.abs(linesAdd - linesDel);
-                        }
+                        linesDel = countLinesDel(formatter.toFileHeader(diff).toEditList());
+                        linesAdd = countLinesAdd(formatter.toFileHeader(diff).toEditList());
+
                         churn += Math.abs(linesAdd - linesDel);
                         linesAddTotal += linesAdd;
                         locTouched += linesAdd + linesDel;
@@ -194,6 +189,21 @@ public class MetricsController {
         }
     }
 
+    private int countLinesDel(EditList editList){
+        int count = 0;
+        for(Edit edit: editList){
+            count += edit.getEndA() - edit.getBeginA();
+        }
+        return count;
+    }
+
+    private int countLinesAdd(EditList editList) {
+        int count = 0;
+        for (Edit edit : editList) {
+            count += edit.getEndB() - edit.getBeginB();
+        }
+        return count;
+    }
     public static int computeAverage(List<Integer> list){
 
         int sum = 0;

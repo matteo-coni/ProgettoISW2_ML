@@ -7,13 +7,13 @@ import model.Issue;
 import java.util.List;
 public class Main {
 
-    private static final  String PROJNAME = "ZOOKEEPER";
+    private static final  String PROJNAME = "BOOKKEEPER";
     public static void main(String[] args) throws Exception {
 
         JiraController jiraControl = new JiraController();
         ProportionController proportionController = new ProportionController();
         List<Release> releaseList = jiraControl.getReleases(PROJNAME); //ottengo tutte le release
-        List<Issue> bugsList = jiraControl.getIssues(PROJNAME,false); //ottengo tutti i bug (controllati)
+        List<Issue> bugsList = jiraControl.getIssues(PROJNAME); //ottengo tutti i bug (controllati)
 
         List<Release> halfReleaseList = jiraControl.halfReleases(releaseList);
 
@@ -39,7 +39,6 @@ public class Main {
 
         MetricsController metricsControl = new MetricsController(PROJNAME);
         List<FileJava> tempListFile = metricsControl.computeBuggynessProva(fileJavaList, bugsListFinal);
-
 
         int countBuggy = 0;
         int countT = 0;
