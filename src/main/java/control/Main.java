@@ -7,7 +7,7 @@ import model.Issue;
 import java.util.List;
 public class Main {
 
-    private static final  String PROJNAME = "BOOKKEEPER";
+    private static final  String PROJNAME = "ZOOKEEPER";
     public static void main(String[] args) throws Exception {
 
         JiraController jiraControl = new JiraController();

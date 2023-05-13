@@ -159,7 +159,7 @@ public class GitController {
         }
     }
 
-    public List<List<FileJava>> loadGitInfo(String projName, List<Release> halfReleaseList) throws IOException, GitAPIException {
+    public List<List<FileJava>> loadGitInfo(String projName, List<Release> halfReleaseList) throws IOException {
 
         new GitController(projName);
         List<RevCommit> commitList = retrieveAllCommits();
@@ -169,7 +169,7 @@ public class GitController {
         List<List<FileJava>> listAllFiles = new ArrayList<>();
 
         for(List<RevCommit> listCommit : commitDividedForRelease) {
-            if(listCommit.size()!=0) {
+            if(!listCommit.isEmpty()) {
                 RevCommit lastCommit = listCommit.get(listCommit.size() - 1);
                 List<FileJava> javaFile = getAllFiles(lastCommit);
                 listAllFiles.add(javaFile);
@@ -192,7 +192,7 @@ public class GitController {
         for(int i=0; i < listAllFiles.size(); i++) {
             for (int j = 0; j < (listAllFiles.get(i).size()); j++) {
 
-                metricsControl.computeMetrics(listAllFiles.get(i).get(j), listAllFiles);//, bugsList);
+                metricsControl.computeMetrics(listAllFiles.get(i).get(j), listAllFiles);
             }
         }
 

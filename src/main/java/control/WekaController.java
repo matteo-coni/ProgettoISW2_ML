@@ -104,6 +104,17 @@ public class WekaController {
         List<ClassifierInfo> costSensNaiveBayesList = new ArrayList<>();
         List<ClassifierInfo> costSensIbkList = new ArrayList<>();
 
+        //list con feature sel and cost sensitive
+        List<ClassifierInfo> featureCostSensRandomForestList = new ArrayList<>();
+        List<ClassifierInfo> featureCostSensNaiveBayesList = new ArrayList<>();
+        List<ClassifierInfo> featureCostSensIbkList = new ArrayList<>();
+
+        //list con oversampling and cost sensitive
+        List<ClassifierInfo> samplingCostSensRandomForestList = new ArrayList<>();
+        List<ClassifierInfo> samplingCostSensNaiveBayesList = new ArrayList<>();
+        List<ClassifierInfo> samplingCostSensIbkList = new ArrayList<>();
+
+
         int countTest = 3;
         for( int count = 2; count <= numberIterator; count++){
 
@@ -183,6 +194,45 @@ public class WekaController {
                 eval.evaluateModel(naiveBayesClassifier, filteredTesting);
                 ClassifierInfo featureIbk = new ClassifierInfo(this.projName, count, IBK, true, false, false);
                 setSimpleClassifier(featureIbk, eval, filteredTraining, filteredTesting, featureIbkList);
+
+                ////--- feature selection con cost sensitive
+
+                CostMatrix costMatrix2 = new CostMatrix(2); //matrice 2x2 con CFN = 10*CFP, ovvero classificare erroneamente
+                //un'istanza negativa come positiva ci costa 10 rispetto al contrario che costa 1
+                costMatrix2.setCell(0,0,0.0);
+                costMatrix2.setCell(1,0, 10.0);
+                costMatrix2.setCell(0,1,1.0);
+                costMatrix2.setCell(1,1,0.0);
+
+                eval = new Evaluation(filteredTesting);
+
+                CostSensitiveClassifier featureCostSensitiveClassifier = new CostSensitiveClassifier();
+                //random forest cost sens and feature sel
+                featureCostSensitiveClassifier.setClassifier(randomForestClassifier);
+                featureCostSensitiveClassifier.setCostMatrix(costMatrix2);
+                featureCostSensitiveClassifier.buildClassifier(filteredTraining);
+                eval.evaluateModel(featureCostSensitiveClassifier, filteredTesting);
+                ClassifierInfo featureCostSensRandomForest = new ClassifierInfo(this.projName, count, RANDOM_FOREST, true, false, true);
+                setSimpleClassifier(featureCostSensRandomForest, eval, filteredTraining, filteredTesting, featureCostSensRandomForestList);
+
+                //naive Bayes cost sens and feature sel
+                eval = new Evaluation(filteredTesting);
+                featureCostSensitiveClassifier.setClassifier(naiveBayesClassifier);
+                featureCostSensitiveClassifier.setCostMatrix(costMatrix2);
+                featureCostSensitiveClassifier.buildClassifier(filteredTraining);
+                eval.evaluateModel(featureCostSensitiveClassifier, filteredTesting);
+                ClassifierInfo featureCostSensNaiveBayes = new ClassifierInfo(this.projName, count, NAIVE_BAYES, true, false, true);
+                setSimpleClassifier(featureCostSensNaiveBayes, eval, filteredTraining, filteredTesting, featureCostSensNaiveBayesList);
+
+                //ibk cost sens and feature sel
+                eval = new Evaluation(filteredTesting);
+                featureCostSensitiveClassifier.setClassifier(ibkClassifier);
+                featureCostSensitiveClassifier.setCostMatrix(costMatrix2);
+                featureCostSensitiveClassifier.buildClassifier(filteredTraining);
+                eval.evaluateModel(featureCostSensitiveClassifier, filteredTesting);
+                ClassifierInfo featureCostSensIbk = new ClassifierInfo(this.projName, count, IBK, true, false, true);
+                setSimpleClassifier(featureCostSensIbk, eval, filteredTraining, filteredTesting, featureCostSensIbkList);
+
 
             ////---- inizio sampling con OVERSAMPLING ma senza feature selection
 
@@ -292,6 +342,37 @@ public class WekaController {
                 ClassifierInfo costSensIbk = new ClassifierInfo(this.projName, count, IBK, false, false, true);
                 setSimpleClassifier(costSensIbk, eval, training, testing, costSensIbkList);
 
+                ///--- inizio oversampling and cost sensitive
+
+                eval = new Evaluation(testing);
+
+                CostSensitiveClassifier samplingCostSensitiveClassifier = new CostSensitiveClassifier();
+                //random forest oversampling and cost sens
+                samplingCostSensitiveClassifier.setClassifier(randomForestClassifier);
+                samplingCostSensitiveClassifier.setCostMatrix(costMatrix);
+                samplingCostSensitiveClassifier.buildClassifier(oversampledData);
+                eval.evaluateModel(samplingCostSensitiveClassifier, testing);
+                ClassifierInfo samplingCostSensRandomForest = new ClassifierInfo(this.projName, count, RANDOM_FOREST, false, true, true);
+                setSimpleClassifier(samplingCostSensRandomForest, eval, oversampledData, testing, samplingCostSensRandomForestList);
+
+                //naive Bayes oversampling and cost sens
+                eval = new Evaluation(testing);
+                samplingCostSensitiveClassifier.setClassifier(naiveBayesClassifier);
+                samplingCostSensitiveClassifier.setCostMatrix(costMatrix);
+                samplingCostSensitiveClassifier.buildClassifier(oversampledData);
+                eval.evaluateModel(samplingCostSensitiveClassifier, testing);
+                ClassifierInfo samplingCostSensNaiveBayes = new ClassifierInfo(this.projName, count, NAIVE_BAYES, false, true, true);
+                setSimpleClassifier(samplingCostSensNaiveBayes, eval, oversampledData, testing, samplingCostSensNaiveBayesList);
+
+                //ibk oversampling and cost sens
+                eval = new Evaluation(testing);
+                samplingCostSensitiveClassifier.setClassifier(ibkClassifier);
+                samplingCostSensitiveClassifier.setCostMatrix(costMatrix);
+                samplingCostSensitiveClassifier.buildClassifier(oversampledData);
+                eval.evaluateModel(samplingCostSensitiveClassifier, testing);
+                ClassifierInfo samplingCostSensIbk = new ClassifierInfo(this.projName, count, IBK, false, false, true);
+                setSimpleClassifier(samplingCostSensIbk, eval, oversampledData, testing, samplingCostSensIbkList);
+
             } catch (Exception e){
                 System.out.println("Exception: " + e.getMessage());
             }
@@ -304,6 +385,9 @@ public class WekaController {
         allRandomForest.add(samplingRandomForestList);
         allRandomForest.add(samplingRandomForestListSel);
         allRandomForest.add(costSensRandomForestList);
+        allRandomForest.add(featureCostSensRandomForestList);
+        allRandomForest.add(samplingCostSensRandomForestList);
+
 
         List<List<ClassifierInfo>> allNaiveBayes = new ArrayList<>();
         allNaiveBayes.add(naiveBayesList);
@@ -311,6 +395,9 @@ public class WekaController {
         allNaiveBayes.add(samplingNaiveBayesList);
         allNaiveBayes.add(samplingNaiveBayesListSel);
         allNaiveBayes.add(costSensNaiveBayesList);
+        allNaiveBayes.add(featureCostSensNaiveBayesList);
+        allNaiveBayes.add(samplingCostSensNaiveBayesList);
+
 
         List<List<ClassifierInfo>> allIbk = new ArrayList<>();
         allIbk.add(ibkList);
@@ -318,6 +405,9 @@ public class WekaController {
         allIbk.add(samplingIbkList);
         allIbk.add(samplingIbkListSel);
         allIbk.add(costSensIbkList);
+        allIbk.add(featureCostSensIbkList);
+        allIbk.add(samplingCostSensIbkList);
+
 
 
         CsvController csvControl = new CsvController(projName);

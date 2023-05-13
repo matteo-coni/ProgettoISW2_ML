@@ -24,8 +24,7 @@ public class JiraController {
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
-            JSONObject json = new JSONObject(jsonText);
-            return json;
+            return new JSONObject(jsonText);
         } finally {
             is.close();
         }
@@ -36,8 +35,7 @@ public class JiraController {
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
-            JSONArray json = new JSONArray(jsonText);
-            return json;
+            return new JSONArray(jsonText);
         } finally {
             is.close();
         }
@@ -90,7 +88,7 @@ public class JiraController {
 
         List<Release> releaseList = getReleases(projName);
         List<Release> halfReleaseList = releaseList; //in modo che
-        //flag per il cold start, se coldStart è true, non devo dimezzare le release perchè sto calcolando cold start
+        //flag per il cold start, se coldStart è true, non devo dimezzare le release perché sto calcolando cold start
         if (!coldStart) {
             //halfReleaseList = halfReleases(releaseList);todo
             halfReleaseList = releaseList;
