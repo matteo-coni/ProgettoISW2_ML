@@ -142,17 +142,6 @@ public class GitController {
                     ObjectId parentID = parent.getId();
                     List<DiffEntry> diffs = formatter.scan(parentID, commitId);
                     computeList(diffs, fileJavaList, i, commit);
-                    /*for (DiffEntry diff : diffs) {
-                        List<RevCommit> listTemp;
-                        for (FileJava file : fileJavaList.get(i)) {
-                            listTemp = file.getListCommmit();
-                            if (diff.getNewPath().equals(file.getFilename()) && (listTemp != null)) {
-                                listTemp.add(commit);
-                                file.setListCommit(listTemp);
-
-                            }
-                        }
-                    }*/
                 }
             }
         /*

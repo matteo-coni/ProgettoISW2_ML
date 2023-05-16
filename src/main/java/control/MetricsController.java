@@ -133,9 +133,9 @@ public class MetricsController {
             formatter.setDiffComparator(RawTextComparator.DEFAULT);
             formatter.setDetectRenames(true);
             for (RevCommit commit : fileJava.getListCommmit()) {
-                if (commit.getTree() == null) continue;
+                if (commit.getTree() == null || commit.getParent(0) == null) continue;
                 RevCommit parent = commit.getParent(0);
-                if (parent == null) continue;
+                //if (parent == null) continue;
                 List<DiffEntry> diffs = formatter.scan(parent.getTree(), commit.getTree());
                 int churn = 0;
                 for (DiffEntry diff : diffs) {
@@ -230,7 +230,7 @@ public class MetricsController {
             for(FileJava fileJava : listFile){
                 for (RevCommit commit : fileJava.getListCommmit()) {
                     for (Issue bug : bugsList) {
-                        Boolean condition = calcCondition(commit, bug);
+                        boolean condition = calcCondition(commit, bug);
                         //if (commit.getShortMessage().contains(bug.getKey() + ":") || commit.getShortMessage().contains(bug.getKey() + " ")) {
                          if(condition){
                             List<FileJava> temp = calcTempList(fileJavaList, bug.getAv(), fileJava.getFilename());
@@ -243,7 +243,7 @@ public class MetricsController {
         return buggyFiles;
     }
 
-    public Boolean calcCondition(RevCommit commit, Issue bug){
+    public boolean calcCondition(RevCommit commit, Issue bug){
         return commit.getShortMessage().contains(bug.getKey() + ":") || commit.getShortMessage().contains(bug.getKey() + " ");
     }
 

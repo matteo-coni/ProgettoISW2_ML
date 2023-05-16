@@ -259,8 +259,8 @@ public class JiraController {
     public static List<Issue> cleanOvFv (List<Issue> bugsList){
         List<Issue> listBugFinal = new ArrayList<>();
         for(Issue bug : bugsList){
-            if(bug.getOv().getId() == 1 && (bug.getFv().getId() == 1)){
-            } else {
+            if(!(bug.getOv().getId() == 1 && (bug.getFv().getId() == 1))) {
+
                 listBugFinal.add(bug);
             }
         }
