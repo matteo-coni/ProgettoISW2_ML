@@ -75,19 +75,21 @@ public class MetricsController {
             int linesOfCode = 0;
             try (ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
                  BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-
-                while ((reader.readLine()) != null) {
+                String read;
+                while ((read = reader.readLine()) != null) {
+                    //ignora la variabile read, non serve nel codice
                     //cosi è senza filtri per il loc (es // ecc)
                     linesOfCode++;
+                    foo(read);
 
                 }
-            //} catch (IOException e) {
-                //throw new RuntimeException(e);
             }
             return linesOfCode;
-
     }
 
+    public void foo(String read){
+
+    }
     public static void computeLocWhen0(FileJava fileJava, List<List<FileJava>> fileJavaList){
 
         //qui calcolo le LOC dei file che avevano sizeLOC=0, prendendo le loc della versione precedente
