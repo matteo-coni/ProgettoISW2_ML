@@ -22,22 +22,30 @@ import java.util.logging.Logger;
 public class GitController {
 
     private final Git git;
-    private static String localPath;
+    private String localPath;
 
-    private static final String PATH= "/Users/matteo/IdeaProjects/";
-    private static Repository repository;
+    private static String USERS = "/Users";
+    private static String MATTEO = "/Matteo";
+
+    private static String IDEAPROJECTS = "/IdeaProjects/";
+
+
+
+    private static final String PATH= USERS + MATTEO + IDEAPROJECTS;
+
+    private Repository repository;
     public GitController (String projName) throws IOException {
-        localPath = PATH + projName.toLowerCase();
-        git = Git.open(new File(localPath));
-        repository = git.getRepository();
+        this.localPath = PATH + projName.toLowerCase();
+        this.git = Git.open(new File(localPath));
+        this.repository = git.getRepository();
     }
-    public static List<RevCommit>  retrieveAllCommits() throws IOException{
+    public List<RevCommit>  retrieveAllCommits() throws IOException{
         /*
           In questo metodo prendo tutti i commit
          */
         List<RevCommit> commitFinal = new ArrayList<>();
 
-        try (Git git = Git.open(new File(localPath))) {
+        try (Git git = Git.open(new File(this.localPath))) {
 
             Iterable<RevCommit> commits = git.log().all().call();
             //dopo aver filtrato, in una lista nuova (commitFinal) aggiungo solo quelli che nello short message contengono BOOKKEEPER-xxx
@@ -80,10 +88,10 @@ public class GitController {
         }
     }
 
-    public static List<FileJava> getAllFiles(RevCommit commit) throws IOException {
+    public List<FileJava> getAllFiles(RevCommit commit) throws IOException {
 
 
-        TreeWalk treeWalk = new TreeWalk(repository);
+        TreeWalk treeWalk = new TreeWalk(this.repository);
         ObjectId treeId = commit.getTree().getId();
 
         treeWalk.reset(treeId);
@@ -118,11 +126,11 @@ public class GitController {
     }
 
 
-    public static void setCommitList(List<List<RevCommit>> commitList, List<List<FileJava>> fileJavaList) throws IOException {
+    public void setCommitList(List<List<RevCommit>> commitList, List<List<FileJava>> fileJavaList) throws IOException {
 
 
         DiffFormatter formatter = new DiffFormatter(DisabledOutputStream.INSTANCE);
-        formatter.setRepository(repository);
+        formatter.setRepository(this.repository);
         formatter.setDiffComparator(RawTextComparator.DEFAULT);
         formatter.setDetectRenames(true);
 

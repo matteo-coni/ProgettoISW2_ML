@@ -124,9 +124,8 @@ public class WekaController {
              */
 
             DataSource source1 = new DataSource(projName + "_training_" + count + ".arff");
-            System.out.println(projName + "_training_" + count + ".arff");
             DataSource source2 = new DataSource(projName + "_testing_" + countTest + ".arff");
-            System.out.println(projName + "_testing_" + countTest + ".arff");
+
             countTest++;
 
             //creo gli oggetti istanze per lavorare su training e testing separatamente
