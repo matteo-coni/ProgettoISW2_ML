@@ -133,8 +133,8 @@ public class GitController {
                     RevCommit parent = commit.getParent(0);
                     ObjectId parentID = parent.getId();
                     List<DiffEntry> diffs = formatter.scan(parentID, commitId);
-
-                    for (DiffEntry diff : diffs) {
+                    computeList(diffs, fileJavaList, i, commit);
+                    /*for (DiffEntry diff : diffs) {
                         List<RevCommit> listTemp;
                         for (FileJava file : fileJavaList.get(i)) {
                             listTemp = file.getListCommmit();
@@ -144,7 +144,7 @@ public class GitController {
 
                             }
                         }
-                    }
+                    }*/
                 }
             }
         /*
@@ -159,6 +159,20 @@ public class GitController {
         }
     }
 
+    public static void computeList(List<DiffEntry> diffs, List<List<FileJava>> javaList, int i, RevCommit commit){
+
+        for (DiffEntry diff : diffs) {
+            List<RevCommit> listTemp;
+            for (FileJava file : javaList.get(i)) {
+                listTemp = file.getListCommmit();
+                if (diff.getNewPath().equals(file.getFilename()) && (listTemp != null)) {
+                    listTemp.add(commit);
+                    file.setListCommit(listTemp);
+
+                }
+            }
+        }
+    }
     public List<List<FileJava>> loadGitInfo(String projName, List<Release> halfReleaseList) throws IOException {
 
         new GitController(projName);
