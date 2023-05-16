@@ -8,7 +8,7 @@ import java.util.*;
 
 public class ProportionController {
 
-    private final static int  THREESHOLDCOLDSTART = 5;
+    private static final int  THREESHOLDCOLDSTART = 5;
 
     /*
        è possibile fare una discussione sull'arrotondamento del valore di iv calcolato con proportion
@@ -37,7 +37,7 @@ public class ProportionController {
 
         //increment
         float p;
-        float p_tot;
+        float pTot;
         float pColdStart;
         int ivId;
         int ovId;
@@ -61,7 +61,7 @@ public class ProportionController {
         */
         for (Issue bugsToDo : bugsListToDo){
            count = 0;
-           p_tot = 0;
+           pTot = 0;
            for (Issue bug : bugsListWithIv){
                /*
                  qui devo controllare che la FV di tutti i bug che uso per calcolare p
@@ -78,11 +78,11 @@ public class ProportionController {
 
                        p = pCalc(ivId, ovId, fvId);
                        count++;
-                       p_tot = p_tot + p;
+                       pTot = pTot + p;
 
                }
            }
-           p_tot = p_tot/count;
+            pTot = pTot/count;
 
            /*
              faccio cold start se il numero dei ticket utilizzati per il calcolo
@@ -91,7 +91,7 @@ public class ProportionController {
            if(count < THREESHOLDCOLDSTART) {
                calculatorIV(bugsToDo,pColdStart, releaseList);
            } else {
-               calculatorIV(bugsToDo, p_tot, releaseList);
+               calculatorIV(bugsToDo, pTot, releaseList);
 
            }
        }
@@ -127,11 +127,11 @@ public class ProportionController {
 
         List<Float> p_tot = new ArrayList<>();
         float p;
-        float p_coldStart;
+        float pColdStart;
         int count;
-        float p_proj;
+        float pProj;
         List<String> listProjName = new ArrayList<>();
-        List<Issue> listIssueColdStart;// = new ArrayList<>();
+        List<Issue> listIssueColdStart;
 
         //todo: aggiungere enum oppure aggiungi altri progetti alla lista con criterio
         listProjName.add("TAJO");
@@ -143,31 +143,30 @@ public class ProportionController {
             JiraController jiraControl = new JiraController();
             listIssueColdStart = jiraControl.getIssues(projName);
             count = 0;
-            p_proj = 0;
+            pProj = 0;
             for(Issue bug : listIssueColdStart){
-                if(bug.getIv()!=null){
-                    if(bug.getOv()!=bug.getFv()){
+                if(bug.getIv()!=null && bug.getOv()!=bug.getFv()){
                         p = pCalc(bug.getIv().getId(), bug.getOv().getId(), bug.getFv().getId());
                         count++;
-                        p_proj += p;
-                    }
+                        pProj += p;
+
                 }
 
             }
-            //System.out.println(p_proj);
-            p_proj = p_proj / count;
-            p_tot.add(p_proj);
+
+            pProj = pProj / count;
+            p_tot.add(pProj);
         }
-        //System.out.println(p_tot);
+
         p_tot.sort(Comparator.comparing(o -> o)); //ordino la lista dei p dei vari progetti
         //qui prendo la mediana
         if (p_tot.size() % 2 == 0) {
-            p_coldStart = (p_tot.get(p_tot.size() / 2) + p_tot.get(p_tot.size() / 2 - 1)) / 2;
+            pColdStart = (p_tot.get(p_tot.size() / 2) + p_tot.get(p_tot.size() / 2 - 1)) / 2;
         } else {
-            p_coldStart = p_tot.get(p_tot.size() / 2);
+            pColdStart = p_tot.get(p_tot.size() / 2);
         }
-        //System.out.println(p_coldStart);
-        return p_coldStart;
+
+        return pColdStart;
 
     }
     public static float pCalc(int ivId, int ovId, int fvId){
@@ -185,7 +184,7 @@ public class ProportionController {
         for(Issue bug: bugsList){
             List<Release> listAv = new ArrayList<>();
 
-            //if (bug.getAv().isEmpty()){ //l'if lo metto solo se voglio calcolare le av soltanto su i bug che ho calcolato con proportion
+
             //in questo modo li ricalcolo tutti
                 idIv = bug.getIv().getId();
                 lastId = bug.getFv().getId() -1  ; //l'ultima prima della fv
@@ -201,7 +200,6 @@ public class ProportionController {
                     }
                 }
 
-            //}
         }
 
 

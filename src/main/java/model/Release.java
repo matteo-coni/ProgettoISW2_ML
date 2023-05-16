@@ -1,7 +1,6 @@
 package model;
 
 import java.sql.Date;
-import java.time.LocalDateTime;
 
 public class Release {
 
@@ -20,7 +19,6 @@ public class Release {
         this.date = date;
 
     }
-
 
     public int getId() {
         return id;

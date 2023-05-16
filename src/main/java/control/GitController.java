@@ -24,14 +24,14 @@ public class GitController {
     private final Git git;
     private String localPath;
 
-    private static String USERS = "/Users";
-    private static String MATTEO = "/Matteo";
+    private static String users = "/Users";
+    private static String matteo = "/Matteo";
 
-    private static String IDEAPROJECTS = "/IdeaProjects/";
+    private static String ideaProjects = "/IdeaProjects/";
 
 
 
-    private static final String PATH= USERS + MATTEO + IDEAPROJECTS;
+    private static final String PATH= users + matteo + ideaProjects;
 
     private Repository repository;
     public GitController (String projName) throws IOException {
@@ -45,9 +45,9 @@ public class GitController {
          */
         List<RevCommit> commitFinal = new ArrayList<>();
 
-        try (Git git = Git.open(new File(this.localPath))) {
+        try ( Git git2 = Git.open(new File(this.localPath))) {
 
-            Iterable<RevCommit> commits = git.log().all().call();
+            Iterable<RevCommit> commits = git2.log().all().call();
             //dopo aver filtrato, in una lista nuova (commitFinal) aggiungo solo quelli che nello short message contengono BOOKKEEPER-xxx
             for (RevCommit commit : commits) {
                     commitFinal.add(commit);

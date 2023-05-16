@@ -27,14 +27,10 @@ public class WekaController {
     private static final String RANDOM_FOREST = "Random Forest";
     private static final String NAIVE_BAYES = "Naive Bayes";
     private static final String IBK = "IBk";
-    //private Git git;
-    //private String localPath = "";
 
     private final String projName;
-    public WekaController(String projName) throws IOException {
-        //this.localPath = "/Users/matteo/IdeaProjects/" + projName.toLowerCase();
-        //this.git = Git.open(new File(localPath));
-        //this.repository = git.getRepository();
+    public WekaController(String projName) {
+
         this.projName = projName;
     }
 
@@ -51,7 +47,7 @@ public class WekaController {
         for(int countRelease = 1; countRelease < halfReleaseList.size(); countRelease++){
 
             ProportionController proportionControl = new ProportionController();
-            List<Issue> bugsListProportion = ProportionController.computeProportion(releaseList.subList(0, countRelease), bugsList);
+            ProportionController.computeProportion(releaseList.subList(0, countRelease), bugsList);
             List<Issue> bugsListFinal = JiraController.cleanOvFv(bugsList);
             proportionControl.calculatorAvAfterProportion(bugsListFinal, releaseList.subList(0, countRelease));
             GitController gitControl = new GitController(projName);
@@ -257,11 +253,7 @@ public class WekaController {
                 ClassifierInfo overSamplingIbk = new ClassifierInfo(this.projName, count, IBK, false, true, false);
                 setSimpleClassifier(overSamplingIbk, eval, oversampledData, testing, samplingIbkList);
 
-                /*---- inizio feature selection and OVERSAMPLING
-                SMOTE smoteFilterSel = new SMOTE();
-                smoteFilterSel.setOptions(new String[] {"-M", "1.0"});
-                smoteFilterSel.setInputFormat(filteredTraining);
-                Instances oversampledDataSel = Filter.useFilter(filteredTraining, smoteFilterSel);*/
+                //---- inizio feature selection and OVERSAMPLING
 
                 if (filteredTraining.numInstances() > 0 && filteredTesting.numInstances() > 0) {
 
@@ -291,9 +283,7 @@ public class WekaController {
                     ClassifierInfo overSamplingIbkSel = new ClassifierInfo(this.projName, count, IBK, true, true, false);
                     setSimpleClassifier(overSamplingIbkSel, eval, oversampledDataSel, filteredTesting, samplingIbkListSel);
 
-                } //else {
-                   // System.out.println("error");
-                //}
+                }
 
                 /* Inizio cost sensitive
                 La cella (0,0) rappresenta il costo di classificare correttamente un'istanza negativa,

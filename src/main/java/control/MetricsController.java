@@ -211,7 +211,7 @@ public class MetricsController {
         for (Integer integer : list) {
             sum += integer;
         }
-        if (list.size()!= 0){
+        if (!list.isEmpty()){
             average = sum / list.size();
         }
 
