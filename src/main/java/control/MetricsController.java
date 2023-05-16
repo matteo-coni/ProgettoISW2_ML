@@ -80,16 +80,13 @@ public class MetricsController {
                     //ignora la variabile read, non serve nel codice
                     //cosi è senza filtri per il loc (es // ecc)
                     linesOfCode++;
-                    foo(read);
+
 
                 }
             }
             return linesOfCode;
     }
 
-    public void foo(String read){
-
-    }
     public static void computeLocWhen0(FileJava fileJava, List<List<FileJava>> fileJavaList){
 
         //qui calcolo le LOC dei file che avevano sizeLOC=0, prendendo le loc della versione precedente

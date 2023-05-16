@@ -125,7 +125,7 @@ public class ProportionController {
 
     public static float calculatorColdStart() throws IOException {
 
-        List<Float> p_tot = new ArrayList<>();
+        List<Float> pTot = new ArrayList<>();
         float p;
         float pColdStart;
         int count;
@@ -155,15 +155,15 @@ public class ProportionController {
             }
 
             pProj = pProj / count;
-            p_tot.add(pProj);
+            pTot.add(pProj);
         }
 
-        p_tot.sort(Comparator.comparing(o -> o)); //ordino la lista dei p dei vari progetti
+        pTot.sort(Comparator.comparing(o -> o)); //ordino la lista dei p dei vari progetti
         //qui prendo la mediana
-        if (p_tot.size() % 2 == 0) {
-            pColdStart = (p_tot.get(p_tot.size() / 2) + p_tot.get(p_tot.size() / 2 - 1)) / 2;
+        if (pTot.size() % 2 == 0) {
+            pColdStart = (pTot.get(pTot.size() / 2) + pTot.get(pTot.size() / 2 - 1)) / 2;
         } else {
-            pColdStart = p_tot.get(p_tot.size() / 2);
+            pColdStart = pTot.get(pTot.size() / 2);
         }
 
         return pColdStart;

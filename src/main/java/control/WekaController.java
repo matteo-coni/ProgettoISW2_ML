@@ -18,7 +18,6 @@ import weka.filters.Filter;
 import weka.filters.supervised.attribute.AttributeSelection;
 import weka.filters.supervised.instance.SMOTE;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
