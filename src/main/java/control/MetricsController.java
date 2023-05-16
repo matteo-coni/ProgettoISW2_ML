@@ -230,7 +230,9 @@ public class MetricsController {
             for(FileJava fileJava : listFile){
                 for (RevCommit commit : fileJava.getListCommmit()) {
                     for (Issue bug : bugsList) {
-                        if (commit.getShortMessage().contains(bug.getKey() + ":") || commit.getShortMessage().contains(bug.getKey() + " ")) {
+                        Boolean condition = calcCondition(commit, bug);
+                        //if (commit.getShortMessage().contains(bug.getKey() + ":") || commit.getShortMessage().contains(bug.getKey() + " ")) {
+                         if(condition){
                             List<FileJava> temp = calcTempList(fileJavaList, bug.getAv(), fileJava.getFilename());
                             buggyFiles.addAll(temp);
                         }
@@ -239,6 +241,10 @@ public class MetricsController {
             }
         }
         return buggyFiles;
+    }
+
+    public Boolean calcCondition(RevCommit commit, Issue bug){
+        return commit.getShortMessage().contains(bug.getKey() + ":") || commit.getShortMessage().contains(bug.getKey() + " ");
     }
 
     public List<FileJava> calcTempList(List<List<FileJava>> fileJavaList, List<Release> av, String fileName ) {

@@ -292,9 +292,9 @@ public class WekaController {
                     ClassifierInfo overSamplingIbkSel = new ClassifierInfo(this.projName, count, IBK, true, true, false);
                     setSimpleClassifier(overSamplingIbkSel, eval, oversampledDataSel, filteredTesting, samplingIbkListSel);
 
-                } else {
-                    System.out.println("error");
-                }
+                } //else {
+                   // System.out.println("error");
+                //}
 
                 /* Inizio cost sensitive
                 La cella (0,0) rappresenta il costo di classificare correttamente un'istanza negativa,
@@ -418,7 +418,7 @@ public class WekaController {
 
 
 
-        System.out.println("Random forest: ");
+        /*System.out.println("Random forest: ");
         for(int i=0;i<randomForestList.size();i++){
             System.out.println("WFindex: " + randomForestList.get(i).getWalkForwardIterationIndex() + " Precision: " + randomForestList.get(i).getPrecision() +
                     " Recall: " + randomForestList.get(i).getRecall() + " AUC: " + randomForestList.get(i).getAuc() + " Kappa: " + randomForestList.get(i).getKappa());
@@ -506,7 +506,7 @@ public class WekaController {
         for(int i=0;i<costSensIbkList.size();i++){
             System.out.println("WFindex: " + costSensIbkList.get(i).getWalkForwardIterationIndex() + " Precision: " + costSensIbkList.get(i).getPrecision() +
                     " Recall: " + costSensIbkList.get(i).getRecall() + " AUC: " + costSensIbkList.get(i).getAuc() + " Kappa: " + costSensIbkList.get(i).getKappa());
-        }
+        }*/
     }
 
     public void setSimpleClassifier(ClassifierInfo classifier, Evaluation eval, Instances training, Instances testing, List<ClassifierInfo> listClassifier ){
