@@ -164,9 +164,11 @@ public class ProportionController {
         //qui prendo la mediana
         if (pTot.size() % 2 == 0) {
             pColdStart = (pTot.get(pTot.size() / 2) + pTot.get(pTot.size() / 2 - 1)) / 2;
-        } else {
-            pColdStart = pTot.get(pTot.size() / 2);
+            return pColdStart;
         }
+
+        pColdStart = pTot.get(pTot.size() / 2);
+
 
         return pColdStart;
 
