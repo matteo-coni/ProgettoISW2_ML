@@ -29,15 +29,11 @@ public class Main {
         MetricsController metricsControl = new MetricsController(PROJNAME);
         List<FileJava> tempListFile = metricsControl.computeBuggynessProva(fileJavaList, bugsListFinal);
 
-        int countBuggy = 0;
-        int countT = 0;
         for(List<FileJava> fileJavaL : fileJavaList){
             for(FileJava file : fileJavaL){
-                countT++;
                 file.setBuggy("No");
                 if(tempListFile.contains(file)){
                     file.setBuggy("Yes");
-                    countBuggy++;
                 }
             }
         }

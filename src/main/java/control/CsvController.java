@@ -141,7 +141,7 @@ public class CsvController {
         List<List<String>> listListString = new ArrayList<>();
 
         for (List<ClassifierInfo> listClass : classifierList) {
-            for (ClassifierInfo classInfo : listClass){
+            for (ClassifierInfo classInfo : listClass) {
                 List<String> temp = new ArrayList<>();
                 temp.add(classInfo.getProjName());
                 temp.add(String.valueOf(classInfo.getWalkForwardIterationIndex()));
@@ -168,16 +168,14 @@ public class CsvController {
 
         String[] header2 = {"Dataset", "#TrainingRelease", "%Training", "Classifier", "FeatureSel", "Sampling", "CostSensitive", "Precision",
                 "Recall", "AUC", "Kappa", "TN", "TP", "FN", "FP"};
+        try (FileWriter writer = new FileWriter(csvFilePathReport)) {
+            CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(header2));
 
-        FileWriter writer = new FileWriter(csvFilePathReport);
-        CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(header2));
+            for (List<String> row : listListString) {
+                printer.printRecord(row);
+            }
 
-        for (List<String> row : listListString) {
-            printer.printRecord(row);
+            // Chiudi il printer e il writer
         }
-
-        // Chiudi il printer e il writer
-        printer.close();
-        writer.close();
     }
 }

@@ -75,7 +75,6 @@ public class MetricsController {
             int linesOfCode = 0;
             try (ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
                  BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-                // commento per code smell definizione per la riga sotto read;
                 while ((reader.readLine()) != null) {
                     //ignora la variabile read, non serve nel codice
                     //cosi è senza filtri per il loc (es // ecc)
