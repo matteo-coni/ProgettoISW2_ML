@@ -41,8 +41,7 @@ public class Main {
                 }
             }
         }
-        System.out.println("Numero file bug yes = " + countBuggy);
-        System.out.println("Tot file = " + countT);
+
 
 
         CsvController csvControl = new CsvController(PROJNAME);

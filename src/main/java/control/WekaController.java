@@ -362,7 +362,7 @@ public class WekaController {
                 setSimpleClassifier(samplingCostSensIbk, eval, oversampledData, testing, samplingCostSensIbkList);
 
             } catch (Exception e){
-                System.out.println("Exception: " + e.getMessage());
+                //eccezione non gestita
             }
 
         } //fine for
@@ -403,104 +403,11 @@ public class WekaController {
         csvControl.makeCsvForReport(allNaiveBayes);
         csvControl.makeCsvForReport(allIbk);
 
-
-
-
-        /*System.out.println("Random forest: ");
-        for(int i=0;i<randomForestList.size();i++){
-            System.out.println("WFindex: " + randomForestList.get(i).getWalkForwardIterationIndex() + " Precision: " + randomForestList.get(i).getPrecision() +
-                    " Recall: " + randomForestList.get(i).getRecall() + " AUC: " + randomForestList.get(i).getAuc() + " Kappa: " + randomForestList.get(i).getKappa());
-        }
-        System.out.println("Naive Bayes: ");
-        for(int i=0;i<naiveBayesList.size();i++){
-            System.out.println("WFindex: " + naiveBayesList.get(i).getWalkForwardIterationIndex() + " Precision: " + naiveBayesList.get(i).getPrecision() +
-                    " Recall: " + naiveBayesList.get(i).getRecall() + " AUC: " + naiveBayesList.get(i).getAuc() + " Kappa: " + naiveBayesList.get(i).getKappa());
-        }
-
-        System.out.println("IBk: ");
-        for(int i=0;i<ibkList.size();i++){
-            System.out.println("WFindex: " + ibkList.get(i).getWalkForwardIterationIndex() + " Precision: " + ibkList.get(i).getPrecision() +
-                    " Recall: " + ibkList.get(i).getRecall() + " AUC: " + ibkList.get(i).getAuc() + " Kappa: " + ibkList.get(i).getKappa());
-        }
-
-        System.out.println("Random forest with best first search (FEATURE SELECTION): ");
-        for(int i=0;i<featureRandomForestList.size();i++){
-            System.out.println("WFindex: " + featureRandomForestList.get(i).getWalkForwardIterationIndex() + " Precision: " + featureRandomForestList.get(i).getPrecision() +
-                    " Recall: " + featureRandomForestList.get(i).getRecall() + " AUC: " + featureRandomForestList.get(i).getAuc() + " Kappa: " + featureRandomForestList.get(i).getKappa());
-        }
-
-        System.out.println("Naive bayes with best first search (FEATURE SELECTION): ");
-        for(int i=0;i<featureNaiveBayesList.size();i++){
-            System.out.println("WFindex: " + featureNaiveBayesList.get(i).getWalkForwardIterationIndex() + " Precision: " + featureNaiveBayesList.get(i).getPrecision() +
-                    " Recall: " + featureNaiveBayesList.get(i).getRecall() + " AUC: " + featureNaiveBayesList.get(i).getAuc() + " Kappa: " + featureNaiveBayesList.get(i).getKappa());
-        }
-
-        System.out.println("Ibk with best first search (FEATURE SELECTION): ");
-        for(int i=0;i<featureIbkList.size();i++){
-            System.out.println("WFindex: " + featureIbkList.get(i).getWalkForwardIterationIndex() + " Precision: " + featureIbkList.get(i).getPrecision() +
-                    " Recall: " + featureIbkList.get(i).getRecall() + " AUC: " + featureIbkList.get(i).getAuc() + " Kappa: " + featureIbkList.get(i).getKappa());
-        }
-
-        ///OVERSAMPLING
-        System.out.println("Random forest with OVERSAMPLING ");
-        for(int i=0;i<samplingRandomForestList.size();i++){
-            System.out.println("WFindex: " + samplingRandomForestList.get(i).getWalkForwardIterationIndex() + " Precision: " + samplingRandomForestList.get(i).getPrecision() +
-                    " Recall: " + samplingRandomForestList.get(i).getRecall() + " AUC: " + samplingRandomForestList.get(i).getAuc() + " Kappa: " + samplingRandomForestList.get(i).getKappa());
-        }
-
-        System.out.println("Naive bayes with OVERSAMPLING ");
-        for(int i=0;i<samplingNaiveBayesList.size();i++){
-            System.out.println("WFindex: " + samplingNaiveBayesList.get(i).getWalkForwardIterationIndex() + " Precision: " + samplingNaiveBayesList.get(i).getPrecision() +
-                    " Recall: " + samplingNaiveBayesList.get(i).getRecall() + " AUC: " + samplingNaiveBayesList.get(i).getAuc() + " Kappa: " + samplingNaiveBayesList.get(i).getKappa());
-        }
-
-        System.out.println("Ibk with OVERSAMPLING ");
-        for(int i=0;i<samplingIbkList.size();i++){
-            System.out.println("WFindex: " + samplingIbkList.get(i).getWalkForwardIterationIndex() + " Precision: " + samplingIbkList.get(i).getPrecision() +
-                    " Recall: " + samplingIbkList.get(i).getRecall() + " AUC: " + samplingIbkList.get(i).getAuc() + " Kappa: " + samplingIbkList.get(i).getKappa());
-        }
-
-        System.out.println("Random forest with FEATURE SELECTION and OVERSAMPLING ");
-        for(int i=0;i<samplingRandomForestListSel.size();i++){
-            System.out.println("WFindex: " + samplingRandomForestListSel.get(i).getWalkForwardIterationIndex() + " Precision: " + samplingRandomForestListSel.get(i).getPrecision() +
-                    " Recall: " + samplingRandomForestListSel.get(i).getRecall() + " AUC: " + samplingRandomForestListSel.get(i).getAuc() + " Kappa: " + samplingRandomForestListSel.get(i).getKappa());
-        }
-
-        System.out.println("Naive bayes with FEATURE SELECTION and OVERSAMPLING ");
-        for(int i=0;i<samplingNaiveBayesListSel.size();i++){
-            System.out.println("WFindex: " + samplingNaiveBayesListSel.get(i).getWalkForwardIterationIndex() + " Precision: " + samplingNaiveBayesListSel.get(i).getPrecision() +
-                    " Recall: " + samplingNaiveBayesListSel.get(i).getRecall() + " AUC: " + samplingNaiveBayesListSel.get(i).getAuc() + " Kappa: " + samplingNaiveBayesListSel.get(i).getKappa());
-        }
-
-        System.out.println("Ibk with FEATURE SELECTION and OVERSAMPLING ");
-        for(int i=0;i<samplingIbkListSel.size();i++){
-            System.out.println("WFindex: " + samplingIbkListSel.get(i).getWalkForwardIterationIndex() + " Precision: " + samplingIbkListSel.get(i).getPrecision() +
-                    " Recall: " + samplingIbkListSel.get(i).getRecall() + " AUC: " + samplingIbkListSel.get(i).getAuc() + " Kappa: " + samplingIbkListSel.get(i).getKappa());
-        }
-
-        System.out.println("Random forest with cost sensitive");
-        for(int i=0;i<costSensRandomForestList.size();i++){
-            System.out.println("WFindex: " + costSensRandomForestList.get(i).getWalkForwardIterationIndex() + " Precision: " + costSensRandomForestList.get(i).getPrecision() +
-                    " Recall: " + costSensRandomForestList.get(i).getRecall() + " AUC: " + costSensRandomForestList.get(i).getAuc() + " Kappa: " + costSensRandomForestList.get(i).getKappa());
-        }
-
-        System.out.println("Naive Bayes with cost sensitive");
-        for(int i=0;i<costSensNaiveBayesList.size();i++){
-            System.out.println("WFindex: " + costSensNaiveBayesList.get(i).getWalkForwardIterationIndex() + " Precision: " + costSensNaiveBayesList.get(i).getPrecision() +
-                    " Recall: " + costSensNaiveBayesList.get(i).getRecall() + " AUC: " + costSensNaiveBayesList.get(i).getAuc() + " Kappa: " + costSensNaiveBayesList.get(i).getKappa());
-        }
-
-        System.out.println("Ibk with cost sensitive");
-        for(int i=0;i<costSensIbkList.size();i++){
-            System.out.println("WFindex: " + costSensIbkList.get(i).getWalkForwardIterationIndex() + " Precision: " + costSensIbkList.get(i).getPrecision() +
-                    " Recall: " + costSensIbkList.get(i).getRecall() + " AUC: " + costSensIbkList.get(i).getAuc() + " Kappa: " + costSensIbkList.get(i).getKappa());
-        }*/
     }
 
     public void setSimpleClassifier(ClassifierInfo classifier, Evaluation eval, Instances training, Instances testing, List<ClassifierInfo> listClassifier ){
 
         classifier.setTrainingPercent(100.0 * training.numInstances() / (training.numInstances() + testing.numInstances()));
-        System.out.println(training.numInstances() + "// " + testing.numInstances());
         classifier.setPrecision(eval.precision(0));
         classifier.setRecall(eval.recall(0));
         classifier.setAuc(eval.areaUnderROC(0));

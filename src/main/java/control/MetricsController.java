@@ -75,8 +75,8 @@ public class MetricsController {
             int linesOfCode = 0;
             try (ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
                  BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-                String read;
-                while ((read = reader.readLine()) != null) {
+                // commento per code smell definizione per la riga sotto read;
+                while ((reader.readLine()) != null) {
                     //ignora la variabile read, non serve nel codice
                     //cosi è senza filtri per il loc (es // ecc)
                     linesOfCode++;
@@ -84,6 +84,7 @@ public class MetricsController {
 
                 }
             }
+
             return linesOfCode;
     }
 
@@ -134,7 +135,6 @@ public class MetricsController {
             for (RevCommit commit : fileJava.getListCommmit()) {
                 if (commit.getTree() == null || commit.getParent(0) == null) continue;
                 RevCommit parent = commit.getParent(0);
-                //if (parent == null) continue;
                 List<DiffEntry> diffs = formatter.scan(parent.getTree(), commit.getTree());
                 int churn = 0;
                 for (DiffEntry diff : diffs) {
@@ -154,7 +154,6 @@ public class MetricsController {
                 }
                 listChurn.add(churn);
                 churnTotal += churn;
-                //System.out.println(churnTotal);
             }
 
             fileJava.setAddedLoc(linesAddTotal); //setto le lines add total
@@ -166,7 +165,7 @@ public class MetricsController {
             } else {
                 fileJava.setMaxLocAdded(0);
             }
-            //System.out.println(listLocAdded);
+
             //ora calcolo e setto la average loc added
             int averageLocAdd = computeAverage(listLocAdded);
             fileJava.setAvgLocAdded(averageLocAdd);
@@ -230,7 +229,6 @@ public class MetricsController {
                 for (RevCommit commit : fileJava.getListCommmit()) {
                     for (Issue bug : bugsList) {
                         boolean condition = calcCondition(commit, bug);
-                        //if (commit.getShortMessage().contains(bug.getKey() + ":") || commit.getShortMessage().contains(bug.getKey() + " ")) {
                          if(condition){
                             List<FileJava> temp = calcTempList(fileJavaList, bug.getAv(), fileJava.getFilename());
                             buggyFiles.addAll(temp);
@@ -269,63 +267,5 @@ public class MetricsController {
         }
         return retList;
     }
-
-    //public static void computeBuggyness(FileJava fileJava, List<Issue> bugsList){
-        /*
-          - per la buggyness, prendo la lista dei commit del fileJava e verifico se fileJava.getCommitList() contiene un commit che ha come shortMessage un
-            BOOKKEEPER-XXX (o xx xxx xxxx) (o ZOO). se si, scorro la lista di tutto i bug, prendo quello che ha il nome uguale a quello che ho appena trovato,
-            prendo la versione, e, se le versioni affette contengono la versione del file, quel file è buggy
-         */
-        //fileJava.setBuggy("No");
-        /*for(RevCommit com : fileJava.getListCommmit()){
-            if(com.getShortMessage().contains("BOOKKEEPER-")){
-                //System.out.println(com.getShortMessage().substring(0,14));
-                for(Issue bug : bugsList){
-                    if(com.getShortMessage().substring(0,13).equals(bug.getKey()) || com.getShortMessage().substring(0,13).equals(bug.getKey())){
-                        System.out.println(bug.getKey() + "   " + bug.getAv() );
-                        for(Release av : bug.getAv()){
-                            if(av.getName().equals(fileJava.getRelease().getName())){
-                                fileJava.setBuggy("Yes");
-                                System.out.println("ENTRATO");
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
-
-        /*fileJava.setBuggy("No");
-        for (Issue bug : bugsList) {
-            String bugKey = bug.getKey();
-            if (bugKey.matches("BOOKKEEPER-\\d+")) {
-                for (RevCommit commit : fileJava.getListCommmit()) {
-                    //if(fileJava.getRelease().getName().equals("4.1.0")) System.out.println(commit.getShortMessage()+ "      bugkey:  " + bugKey +  " av: " + bug.getAv() + " file rel: " + fileJava.getRelease().getName()); //prova stampa
-                    /*if (commit.getShortMessage().contains(bugKey)) {
-                                fileJava.setBuggy("Yes");
-                    }
-                    /*if(bug.getAv().contains(fileJava.getRelease())) {
-                        System.out.println("SECOND IFFF");
-                        fileJava.setBuggy("yes");
-                    }
-                    if (commit.getShortMessage().contains(bugKey)) {
-                        for (Release av : bug.getAv()) {
-                            if (av.getName().equals(fileJava.getRelease().getName())) {
-                                fileJava.setBuggy("Yes");
-                                System.out.println("ENTRATO");
-                                return;
-                            }
-                        }
-                    }
-                }
-
-
-
-                        //break;
-            }
-        }
-        //fileJava.setBuggy("No");
-
-    }*/
 }
 

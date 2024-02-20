@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="fix code smell #10">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="fix code smell">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/control/CsvController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/CsvController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/control/MetricsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/MetricsController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/ProportionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/ProportionController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/control/WekaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/WekaController.java" afterDir="false" />
     </list>
@@ -139,6 +138,7 @@
       <workItem from="1683617599759" duration="86248000" />
       <workItem from="1684941146908" duration="2276000" />
       <workItem from="1708293814112" duration="3666000" />
+      <workItem from="1708462803413" duration="796000" />
     </task>
     <task id="LOCAL-00001" summary="Add getReleases and main">
       <created>1680622019931</created>
@@ -378,14 +378,20 @@
       <option name="project" value="LOCAL" />
       <updated>1684255839392</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="fix code smell">
+      <created>1708462959732</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1708462959732</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix GitController per recuperare i commit BOOKKEEPER-xxx" />
     <MESSAGE value="GitController: costruisco oggetti file con relativi commit" />
     <MESSAGE value="Compute lines of code in MetricsController" />
     <MESSAGE value="Compute lines of code (when 0) and authors" />
@@ -410,7 +416,8 @@
     <MESSAGE value="fix code smell #9" />
     <MESSAGE value="fix code smell #9-2" />
     <MESSAGE value="fix code smell #10" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix code smell #10" />
+    <MESSAGE value="fix code smell" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix code smell" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

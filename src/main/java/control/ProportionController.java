@@ -191,7 +191,7 @@ public class ProportionController {
                 for(i=idIv; i<=lastId; i++){
 
                     for (Release rel : releaseList){
-                        Release relAv;//  = null;
+                        Release relAv;//null
                         if (rel.getId()==i){
                             relAv = rel;
                             listAv.add(relAv);
