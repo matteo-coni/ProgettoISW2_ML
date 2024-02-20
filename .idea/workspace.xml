@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="fix bugs">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/control/CsvController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/CsvController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/control/MetricsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/MetricsController.java" afterDir="false" />
+    <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="fix code smell">
       <change beforePath="$PROJECT_DIR$/src/main/java/control/ProportionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/ProportionController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -137,7 +134,7 @@
       <workItem from="1683617599759" duration="86248000" />
       <workItem from="1684941146908" duration="2276000" />
       <workItem from="1708293814112" duration="3666000" />
-      <workItem from="1708462803413" duration="3176000" />
+      <workItem from="1708462803413" duration="3534000" />
     </task>
     <task id="LOCAL-00001" summary="Add getReleases and main">
       <created>1680622019931</created>
@@ -405,7 +402,21 @@
       <option name="project" value="LOCAL" />
       <updated>1708465389813</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="fix bugs">
+      <created>1708466113563</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1708466113563</updated>
+    </task>
+    <task id="LOCAL-00040" summary="fix code smell">
+      <created>1708466276659</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1708466276659</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -433,11 +444,11 @@
     <MESSAGE value="fix code smell #9" />
     <MESSAGE value="fix code smell #9-2" />
     <MESSAGE value="fix code smell #10" />
-    <MESSAGE value="fix code smell" />
     <MESSAGE value="fix lasts code smells" />
     <MESSAGE value="fix lasts code smells and bugs" />
     <MESSAGE value="fix bugs" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix bugs" />
+    <MESSAGE value="fix code smell" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix code smell" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

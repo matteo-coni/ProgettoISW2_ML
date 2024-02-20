@@ -90,11 +90,12 @@ public class ProportionController {
              di p è minore di 5
             */
            if(count < THREESHOLDCOLDSTART) {
-               calculatorIV(bugsToDo,pColdStart, releaseList);
-           } else {
-               calculatorIV(bugsToDo, pTot, releaseList);
-
+               calculatorIV(bugsToDo, pColdStart, releaseList);
+               return bugsListProportion;
            }
+           calculatorIV(bugsToDo, pTot, releaseList);
+
+
        }
 
         return bugsListProportion; //qui devo ritornare la lista dei bug con tutte le iv e av presenti, quindi quella definitiva
