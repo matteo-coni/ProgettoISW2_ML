@@ -82,7 +82,8 @@ public class ProportionController {
 
                }
            }
-            pTot = pTot/count;
+            if (count != 0)
+                pTot = pTot/count;
 
            /*
              faccio cold start se il numero dei ticket utilizzati per il calcolo
@@ -154,7 +155,8 @@ public class ProportionController {
 
             }
 
-            pProj = pProj / count;
+            if(count !=0)
+                pProj = pProj / count;
             pTot.add(pProj);
         }
 

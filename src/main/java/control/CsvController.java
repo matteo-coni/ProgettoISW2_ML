@@ -57,17 +57,15 @@ public class CsvController {
         String[] header = {"Release", "Filename", "LOC", "NR", "Authors", "Loc Touched", "Loc added", "LOC added",
                             "Avg LOC added", "Churn", "Max Churn", "Avg Churn", "Buggy"};
 
-        FileWriter writer = new FileWriter(csvFilePath);
+        try (FileWriter writer = new FileWriter(csvFilePath)) {
 
-        CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(header));
+            CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(header));
 
-        for (List<String> row : listListString) {
-            printer.printRecord(row);
+            for (List<String> row : listListString) {
+                printer.printRecord(row);
+            }
+
         }
-
-        // Chiudi il printer e il writer
-        printer.close();
-        writer.close();
     }
 
     public void generateArff(String projName, int countRelease, String training) throws Exception {
@@ -124,7 +122,6 @@ public class CsvController {
                 "Avg LOC added", "Churn", "Max Churn", "Avg Churn", "Buggy"};
 
         try (FileWriter writer = new FileWriter(csvFilePath)) {
-            ;
 
             CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(header2));
 
@@ -132,7 +129,6 @@ public class CsvController {
                 printer.printRecord(row);
             }
 
-            // Chiudi il printer e il writer
         }
     }
 
