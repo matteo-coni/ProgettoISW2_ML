@@ -23,17 +23,6 @@ public class Main {
         //ora calcoliamo le av dei bug le quali iv sono state calcolate con proportion
         proportionController.calculatorAvAfterProportion(bugsListFinal, releaseList);
 
-        /*
-        stampa con av
-        for (Issue issues : bugsListFinal){
-            System.out.println("num: " + issues.getNum() + " key: " + issues.getKey() + " ov: " + issues.getOv().getName() + " fv: " +issues.getFv().getName() + " indice fv: " + issues.getFv().getId());
-            if (issues.getIv()!=null) System.out.println("indice iv: " + issues.getIv().getId());
-            for(Release rel: issues.getAv()) System.out.println("av: " + rel.getId());
-        }
-
-        next: retrive git java file and metrics
-        */
-
         GitController gitControl = new GitController(PROJNAME);
         List<List<FileJava>> fileJavaList = gitControl.loadGitInfo(PROJNAME, releaseList); //qui ottengo una lista di file java (model.FileJava) con tutte le metriche calcolate
 
@@ -54,6 +43,7 @@ public class Main {
         }
         System.out.println("Numero file bug yes = " + countBuggy);
         System.out.println("Tot file = " + countT);
+
 
         CsvController csvControl = new CsvController(PROJNAME);
         //genero il file csv

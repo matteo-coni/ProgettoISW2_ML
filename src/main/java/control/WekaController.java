@@ -358,7 +358,7 @@ public class WekaController {
                 samplingCostSensitiveClassifier.setCostMatrix(costMatrix);
                 samplingCostSensitiveClassifier.buildClassifier(oversampledData);
                 eval.evaluateModel(samplingCostSensitiveClassifier, testing);
-                ClassifierInfo samplingCostSensIbk = new ClassifierInfo(this.projName, count, IBK, false, false, true);
+                ClassifierInfo samplingCostSensIbk = new ClassifierInfo(this.projName, count, IBK, false, true, true);
                 setSimpleClassifier(samplingCostSensIbk, eval, oversampledData, testing, samplingCostSensIbkList);
 
             } catch (Exception e){

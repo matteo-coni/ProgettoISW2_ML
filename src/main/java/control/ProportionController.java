@@ -133,11 +133,11 @@ public class ProportionController {
         List<String> listProjName = new ArrayList<>();
         List<Issue> listIssueColdStart;
 
-        //todo: aggiungere enum oppure aggiungi altri progetti alla lista con criterio
+
         listProjName.add("TAJO");
         listProjName.add("STORM");
 
-        //for su tutti i progetti scelti, per ora con lista
+        //for su tutti i progetti scelti
         for(String projName : listProjName) {
             //ora prendo i bug
             JiraController jiraControl = new JiraController();

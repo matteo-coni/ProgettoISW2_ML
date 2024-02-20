@@ -120,7 +120,7 @@ public class CsvController {
 
         csvFilePath = projName + "_testing_" + i + ".csv";
 
-        String[] header2 = {"Release", "Filename", "LOC", "NR", "Authors", "Loc Touched", "Loc added", "LOC added",
+        String[] header2 = {"Release", "Filename", "LOC", "NR", "Authors", "Loc Touched", "Loc added", "Max LOC added",
                 "Avg LOC added", "Churn", "Max Churn", "Avg Churn", "Buggy"};
 
         FileWriter writer = new FileWriter(csvFilePath);
