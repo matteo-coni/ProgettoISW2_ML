@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88086a69-c3fa-4737-8511-20e2f8dee65d" name="Changes" comment="fix code smell">
-      <change beforePath="$PROJECT_DIR$/src/main/java/control/ProportionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/control/ProportionController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,8 +107,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
-      <option name="TEST_OBJECT" value="class" />
+    <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
+      <option name="TEST_OBJECT" value="CLASS" />
+      <properties />
+      <listeners />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -134,7 +136,7 @@
       <workItem from="1683617599759" duration="86248000" />
       <workItem from="1684941146908" duration="2276000" />
       <workItem from="1708293814112" duration="3666000" />
-      <workItem from="1708462803413" duration="3534000" />
+      <workItem from="1708462803413" duration="3784000" />
     </task>
     <task id="LOCAL-00001" summary="Add getReleases and main">
       <created>1680622019931</created>
@@ -416,7 +418,14 @@
       <option name="project" value="LOCAL" />
       <updated>1708466276659</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="fix code smell">
+      <created>1708466402546</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1708466402546</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
