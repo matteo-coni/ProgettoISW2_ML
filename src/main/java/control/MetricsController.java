@@ -24,6 +24,8 @@ public class MetricsController {
 
     Repository repository;
 
+    String line;
+
     public MetricsController(String projName) throws IOException {
         String localPath = "/Users/matteo/IdeaProjects/" + projName.toLowerCase();
         try(Git git = Git.open(new File(localPath))) {
@@ -77,7 +79,7 @@ public class MetricsController {
             try (ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
                  BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
 
-                while (reader.readLine() != null) {
+                while ((line = reader.readLine()) != null) {
                     //ignora la variabile read, non serve nel codice
                     //cosi è senza filtri per il loc (es // ecc)
                     linesOfCode++;
